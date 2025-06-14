@@ -1,0 +1,296 @@
+/* Professional Course Syllabus Layout */
+
+/* Main Title Styling */
+.mdx-content h1 {
+  /* Centered title */
+  text-align: center;
+  
+  /* Bold, sans-serif font */
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  
+  /* Subtle bottom border */
+  border-bottom: 2px solid #333;
+  padding-bottom: 16px;
+  margin: 0 0 32px 0;
+  
+  /* Remove gradient background for professional look */
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: #333;
+  
+  /* Professional spacing */
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+/* Column and Bar Containers */
+.mdx-content table,
+.mdx-content .content-container,
+.mdx-content .info-box {
+  /* Consistent outline */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  
+  /* Light box-shadow for depth */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  /* Internal padding */
+  padding: 12px;
+  
+  /* Spacing between containers */
+  margin-bottom: 16px;
+}
+
+/* Table Styling Override for Professional Look */
+.mdx-content table {
+  background: white;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.mdx-content th {
+  background: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #e0e0e0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.mdx-content td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+  vertical-align: top;
+}
+
+.mdx-content tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.mdx-content tr:hover {
+  background: #f5f5f5;
+  transition: background-color 0.2s ease;
+}
+
+/* Interactive Button Styling */
+.professional-button,
+.mdx-content button,
+.tab-button {
+  /* Modern, rounded corners */
+  border-radius: 6px;
+  
+  /* Primary colors */
+  background-color: #2196F3;
+  color: white;
+  
+  /* Padding */
+  padding: 10px 20px;
+  
+  /* Center-align text */
+  text-align: center;
+  
+  /* Remove default button styles */
+  border: none;
+  cursor: pointer;
+  
+  /* Font styling */
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  
+  /* Transition animation */
+  transition: all 0.3s ease;
+  
+  /* Base box-shadow */
+  box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+}
+
+/* Button Hover State */
+.professional-button:hover,
+.mdx-content button:hover,
+.tab-button:hover {
+  /* Darken background by 10% */
+  background-color: #1976D2;
+  
+  /* Enhanced box-shadow on hover */
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+  
+  /* Slight lift effect */
+  transform: translateY(-1px);
+}
+
+/* Button Focus State for Accessibility */
+.professional-button:focus,
+.mdx-content button:focus,
+.tab-button:focus {
+  outline: 2px solid #2196F3;
+  outline-offset: 2px;
+}
+
+/* Tab Navigation Styling */
+.tab-navigation {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0;
+}
+
+.tab-navigation .tab-button {
+  border-radius: 6px 6px 0 0;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-navigation .tab-button.active {
+  background-color: white;
+  color: #2196F3;
+  border-bottom-color: #2196F3;
+  box-shadow: none;
+}
+
+.tab-navigation .tab-button.active:hover {
+  background-color: white;
+  transform: none;
+}
+
+/* Content Containers */
+.content-section {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  margin: 16px 0;
+  background: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  /* Stack columns on mobile */
+  .mdx-content {
+    padding: 16px;
+  }
+  
+  /* Maintain minimum margins */
+  .mdx-content table,
+  .mdx-content .content-container,
+  .mdx-content .info-box,
+  .content-section {
+    margin: 16px 0;
+  }
+  
+  /* Adjust title for mobile */
+  .mdx-content h1 {
+    font-size: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+  }
+  
+  /* Stack tab navigation on mobile */
+  .tab-navigation {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .tab-navigation .tab-button {
+    border-radius: 4px;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  
+  /* Responsive table */
+  .mdx-content table {
+    font-size: 12px;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+  }
+  
+  .mdx-content th,
+  .mdx-content td {
+    padding: 8px;
+    min-width: 100px;
+  }
+}
+
+/* Additional Professional Elements */
+.info-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  margin: 16px 0;
+  background: white;
+}
+
+.info-card h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* List styling within containers */
+.mdx-content .content-section ul,
+.mdx-content .info-card ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.mdx-content .content-section li,
+.mdx-content .info-card li {
+  margin: 4px 0;
+  color: #555;
+}
+
+/* Professional color scheme */
+:root {
+  --primary-color: #2196F3;
+  --primary-dark: #1976D2;
+  --border-color: #e0e0e0;
+  --background-light: #fafafa;
+  --text-primary: #333;
+  --text-secondary: #555;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure consistent spacing */
+.mdx-content > * + * {
+  margin-top: 16px;
+}
+
+/* Professional header styling */
+.syllabus-header {
+  text-align: center;
+  border-bottom: 2px solid #333;
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+}
+
+.syllabus-header h1 {
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.syllabus-header .subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+  font-weight: 400;
+}

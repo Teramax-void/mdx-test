@@ -6,6 +6,7 @@ import SyllabusSheet004 from './docs/Syllabus_mat/sheet004.mdx';
 import SyllabusSheet005 from './docs/Syllabus_mat/sheet005.mdx';
 import BackToTop from './components/BackToTop';
 import './styles/mdx-content.css';
+import './styles/professional-syllabus.css';
 
 const TABS = [
   { label: 'Syllabus', content: <SyllabusSheet001 /> },
@@ -21,23 +22,19 @@ export default function SyllabusPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
-          <h1 className="text-3xl font-bold text-white mb-2">Course Syllabus</h1>
-          <p className="text-blue-100 text-sm">Object-Oriented Programming using Java (PRO192)</p>
+        {/* Professional Header */}
+        <div className="syllabus-header bg-white px-8 py-6">
+          <h1>Course Syllabus</h1>
+          <p className="subtitle">Object-Oriented Programming using Java (PRO192)</p>
         </div>
 
-        {/* Tab Navigation */}
-        <nav className="bg-white border-b border-gray-200 px-8" aria-label="Syllabus Sections">
+        {/* Professional Tab Navigation */}
+        <nav className="tab-navigation bg-white border-b border-gray-200 px-8" aria-label="Syllabus Sections">
           <div className="flex gap-1 -mb-px">
             {TABS.map((t, i) => (
               <button
                 key={t.label}
-                className={`px-6 py-4 font-semibold text-sm border-b-2 rounded-t-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 ${
-                  tab === i 
-                    ? 'border-blue-600 text-blue-600 bg-blue-50 shadow-sm' 
-                    : 'border-transparent text-gray-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
-                }`}
+                className={`tab-button ${tab === i ? 'active' : ''}`}
                 onClick={() => setTab(i)}
                 type="button"
                 aria-current={tab === i ? 'page' : undefined}
@@ -50,8 +47,19 @@ export default function SyllabusPage() {
 
         {/* Content Area */}
         <section className="mdx-content bg-white min-h-[600px]">
-          {TABS[tab].content}
+          <div className="content-section">
+            {TABS[tab].content}
+          </div>
         </section>
+
+        {/* Action Button Example */}
+        <div className="px-8 py-6 bg-gray-50 border-t">
+          <div className="text-center">
+            <button className="professional-button" type="button">
+              Download Syllabus PDF
+            </button>
+          </div>
+        </div>
       </div>
       
       <BackToTop />
