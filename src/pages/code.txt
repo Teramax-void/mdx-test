@@ -1,0 +1,48 @@
+import React, { useState } from 'react';
+import Sidebar from '../components/Sidebar';
+import AssignmentDetails from '../components/AssignmentDetails';
+import EmbedContainer from '../components/EmbedContainer';
+
+const CodePage: React.FC = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  return (
+    <div className="flex flex-1 h-full">
+      {/* Sidebar - Collapsible */}
+      <div className={`bg-black border-r border-gray-800 flex-shrink-0 transition-all duration-300 ease-in-out ${
+        isSidebarCollapsed ? 'w-12' : 'w-80'
+      }`}>
+        <div className="sticky top-0 h-screen overflow-y-auto">
+          <Sidebar 
+            isCollapsed={isSidebarCollapsed} 
+            onToggleCollapse={handleToggleSidebar}
+          />
+        </div>
+      </div>
+      
+      <main className="flex-1 p-8 min-w-0">
+        <div className="max-w-7xl mx-auto h-full flex flex-col">
+          <div className={`grid gap-8 transition-all duration-300 h-full flex-grow ${
+            isSidebarCollapsed ? 'grid-cols-1 lg:grid-cols-4' : 'grid-cols-1 lg:grid-cols-3'
+          }`}>
+            {/* Code Editor Embed - Takes up more space when sidebar is collapsed */}
+            <div className={`transition-all duration-300 h-full w-full ${
+              isSidebarCollapsed ? 'lg:col-span-3' : 'lg:col-span-2'
+            }`}>
+              <EmbedContainer 
+                embedUrl="https://www.jdoodle.com/embed/v1/357eaa8f87a2b133"
+                title="HelloWorld Assignment"
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default CodePage;
