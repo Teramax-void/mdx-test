@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, BookOpen, Code, Calculator, CreditCard, User, Copy, Check, Terminal, X, Target, Zap } from 'lucide-react';
+import { useSettings } from '../contexts/SettingsContext';
 
 interface CodeExample {
   name: string;
@@ -15,6 +16,45 @@ const ComponentsPage: React.FC = () => {
   const [selectedExample, setSelectedExample] = useState<CodeExample | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const { settings } = useSettings();
+
+  // Dynamic theme classes
+  const getThemeClasses = () => {
+    if (settings.theme === 'light') {
+      return {
+        background: 'bg-gray-50',
+        text: {
+          primary: 'text-gray-900',
+          secondary: 'text-gray-600',
+          muted: 'text-gray-500'
+        },
+        card: 'bg-white border-gray-200',
+        button: {
+          active: 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-600 border-cyan-500/30',
+          inactive: 'bg-gray-100 text-gray-600 border-gray-200 hover:text-gray-900 hover:border-gray-300'
+        },
+        modal: 'bg-white border-gray-200',
+        overlay: 'bg-black/60'
+      };
+    }
+    return {
+      background: 'bg-black',
+      text: {
+        primary: 'text-white',
+        secondary: 'text-gray-400',
+        muted: 'text-gray-500'
+      },
+      card: 'bg-black border-gray-800',
+      button: {
+        active: 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 border-cyan-500/30',
+        inactive: 'bg-gray-900/50 text-gray-400 border-gray-700 hover:text-white hover:border-gray-600'
+      },
+      modal: 'bg-black border-gray-800',
+      overlay: 'bg-black/80'
+    };
+  };
+
+  const themeClasses = getThemeClasses();
 
   const codeExamples: CodeExample[] = [
     { 
@@ -172,7 +212,7 @@ const ComponentsPage: React.FC = () => {
 
   return (
     <>
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className={`flex-1 p-8 overflow-y-auto ${themeClasses.background}`}>
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
@@ -181,14 +221,14 @@ const ComponentsPage: React.FC = () => {
                 <Target className="w-6 h-6 text-cyan-400" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-white tracking-wide">Assignment Components</h1>
-                <p className="text-gray-400 text-lg tracking-wide">Reusable Java code examples and templates</p>
+                <h1 className={`text-4xl font-bold ${themeClasses.text.primary} tracking-wide`}>Assignment Components</h1>
+                <p className={`${themeClasses.text.secondary} text-lg tracking-wide`}>Reusable Java code examples and templates</p>
               </div>
             </div>
             
             {/* Category Filter */}
             <div className="flex items-center space-x-4 mb-6">
-              <span className="text-sm font-bold text-gray-400 tracking-widest">FILTER BY CATEGORY:</span>
+              <span className={`text-sm font-bold ${themeClasses.text.secondary} tracking-widest`}>FILTER BY CATEGORY:</span>
               <div className="flex items-center space-x-2">
                 {categories.map((category) => (
                   <button
@@ -196,8 +236,8 @@ const ComponentsPage: React.FC = () => {
                     onClick={() => setSelectedCategory(category)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium tracking-wide transition-all duration-300 border ${
                       selectedCategory === category
-                        ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 border-cyan-500/30'
-                        : 'bg-gray-900/50 text-gray-400 border-gray-700 hover:text-white hover:border-gray-600'
+                        ? themeClasses.button.active
+                        : themeClasses.button.inactive
                     }`}
                   >
                     {category}
@@ -212,7 +252,7 @@ const ComponentsPage: React.FC = () => {
             {filteredExamples.map((example) => (
               <div
                 key={example.name}
-                className="bg-black border border-gray-800 rounded-xl p-6 hover:border-cyan-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden"
+                className={`${themeClasses.card} rounded-xl p-6 hover:border-cyan-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden`}
                 onClick={() => openCodeModal(example)}
               >
                 {/* Animated background gradient */}
@@ -225,10 +265,10 @@ const ComponentsPage: React.FC = () => {
                         {example.icon}
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors duration-300">
+                        <h3 className={`text-lg font-bold ${themeClasses.text.primary} group-hover:text-cyan-400 transition-colors duration-300`}>
                           {example.name}
                         </h3>
-                        <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
+                        <p className={`text-xs ${themeClasses.text.muted} uppercase tracking-widest font-semibold`}>
                           {example.category}
                         </p>
                       </div>
@@ -239,12 +279,12 @@ const ComponentsPage: React.FC = () => {
                     </div>
                   </div>
                   
-                  <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                  <p className={`${themeClasses.text.secondary} text-sm leading-relaxed mb-4`}>
                     {example.description}
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <div className={`flex items-center space-x-2 text-xs ${themeClasses.text.muted}`}>
                       <Code className="w-3 h-3" />
                       <span>JAVA</span>
                     </div>
@@ -260,34 +300,34 @@ const ComponentsPage: React.FC = () => {
           </div>
 
           {/* Stats Section */}
-          <div className="mt-12 bg-black/50 border border-gray-800 rounded-xl p-8 relative overflow-hidden">
+          <div className={`mt-12 ${themeClasses.card} rounded-xl p-8 relative overflow-hidden`}>
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5"></div>
             <div className="relative">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg">
                   <Zap className="w-5 h-5 text-cyan-400" />
                 </div>
-                <h3 className="text-xl font-bold text-white tracking-wide">COMPONENT LIBRARY STATS</h3>
+                <h3 className={`text-xl font-bold ${themeClasses.text.primary} tracking-wide`}>COMPONENT LIBRARY STATS</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-cyan-400 mb-2">{codeExamples.length}</div>
-                  <div className="text-sm text-gray-400 tracking-wide">Total Components</div>
+                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Total Components</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-purple-400 mb-2">{categories.length - 1}</div>
-                  <div className="text-sm text-gray-400 tracking-wide">Categories</div>
+                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Categories</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-400 mb-2">
                     {codeExamples.filter(e => e.difficulty === 'Beginner').length}
                   </div>
-                  <div className="text-sm text-gray-400 tracking-wide">Beginner Level</div>
+                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Beginner Level</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-yellow-400 mb-2">100%</div>
-                  <div className="text-sm text-gray-400 tracking-wide">Ready to Use</div>
+                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Ready to Use</div>
                 </div>
               </div>
             </div>
@@ -297,23 +337,23 @@ const ComponentsPage: React.FC = () => {
 
       {/* Code Example Modal */}
       {selectedExample && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-black border border-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+        <div className={`fixed inset-0 ${themeClasses.overlay} backdrop-blur-sm z-50 flex items-center justify-center p-4`}>
+          <div className={`${themeClasses.modal} rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative`}>
             {/* Animated background gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-transparent opacity-50"></div>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400"></div>
             
             <div className="relative">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-800">
+              <div className={`flex items-center justify-between p-6 border-b ${settings.theme === 'light' ? 'border-gray-200' : 'border-gray-800'}`}>
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
                     {selectedExample.icon}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white tracking-wide">{selectedExample.name}</h3>
+                    <h3 className={`text-2xl font-bold ${themeClasses.text.primary} tracking-wide`}>{selectedExample.name}</h3>
                     <div className="flex items-center space-x-3 mt-1">
-                      <p className="text-gray-400 text-sm tracking-wide">{selectedExample.description}</p>
+                      <p className={`${themeClasses.text.secondary} text-sm tracking-wide`}>{selectedExample.description}</p>
                       <div className={`px-2 py-1 rounded-md text-xs font-bold tracking-wide border ${getDifficultyColor(selectedExample.difficulty)}`}>
                         {selectedExample.difficulty}
                       </div>
@@ -341,7 +381,7 @@ const ComponentsPage: React.FC = () => {
                   
                   <button
                     onClick={closeCodeModal}
-                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 border border-gray-700 hover:border-gray-600"
+                    className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:${settings.theme === 'light' ? 'bg-gray-100' : 'bg-gray-800/50'} rounded-lg transition-all duration-300 border ${settings.theme === 'light' ? 'border-gray-200 hover:border-gray-300' : 'border-gray-700 hover:border-gray-600'}`}
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -350,25 +390,25 @@ const ComponentsPage: React.FC = () => {
               
               {/* Code Content */}
               <div className="p-6 max-h-[70vh] overflow-y-auto">
-                <div className="bg-gray-900/50 rounded-lg border border-gray-700/50 overflow-hidden">
-                  <div className="bg-gradient-to-r from-gray-900/80 to-gray-800/80 px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+                <div className={`${settings.theme === 'light' ? 'bg-gray-100 border-gray-200' : 'bg-gray-900/50 border-gray-700/50'} rounded-lg border overflow-hidden`}>
+                  <div className={`bg-gradient-to-r from-gray-900/80 to-gray-800/80 px-4 py-3 border-b ${settings.theme === 'light' ? 'border-gray-200' : 'border-gray-700/50'} flex items-center justify-between`}>
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center space-x-2">
                         <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                       </div>
-                      <span className="text-sm text-gray-400 font-mono">{selectedExample.name}.java</span>
+                      <span className={`text-sm ${themeClasses.text.secondary} font-mono`}>{selectedExample.name}.java</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <div className={`flex items-center space-x-2 text-xs ${themeClasses.text.muted}`}>
                       <span>JAVA</span>
-                      <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+                      <div className={`w-1 h-1 ${themeClasses.text.muted} rounded-full`}></div>
                       <span>UTF-8</span>
                     </div>
                   </div>
                   
-                  <div className="p-6 bg-black/30">
-                    <pre className="text-sm text-gray-300 overflow-x-auto font-mono leading-relaxed">
+                  <div className={`p-6 ${settings.theme === 'light' ? 'bg-gray-50' : 'bg-black/30'}`}>
+                    <pre className={`text-sm ${themeClasses.text.primary} overflow-x-auto font-mono leading-relaxed`}>
                       <code className="language-java">{selectedExample.code}</code>
                     </pre>
                   </div>
@@ -376,11 +416,11 @@ const ComponentsPage: React.FC = () => {
                 
                 {/* Usage Tips */}
                 <div className="mt-6 p-4 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg border border-cyan-500/30">
-                  <h4 className="text-white font-bold mb-2 flex items-center space-x-2">
+                  <h4 className={`${themeClasses.text.primary} font-bold mb-2 flex items-center space-x-2`}>
                     <span className="text-cyan-400">💡</span>
                     <span className="tracking-wide">USAGE TIP</span>
                   </h4>
-                  <p className="text-gray-300 text-sm leading-relaxed">
+                  <p className={`${themeClasses.text.secondary} text-sm leading-relaxed`}>
                     Copy this code and paste it into the editor in the Code section to see it in action. You can modify and experiment with the code to better understand the concepts.
                   </p>
                 </div>
