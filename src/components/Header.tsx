@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Settings, Sun, Zap, Home, BookOpen, Code, Layers } from 'lucide-react';
+import { Search, Settings, Sun, Zap, Home, BookOpen, Code, Layers, FileText } from 'lucide-react';
 import SettingsHover from './SettingsHover';
 
 const Header: React.FC = () => {
@@ -13,9 +13,9 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-black border-b border-gray-800 px-6 py-4 relative overflow-hidden z-50">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5"></div>
+      <header className="fixed top-0 left-0 right-0 bg-black border-b border-gray-800 px-6 py-4 relative overflow-hidden z-50 will-change-auto">
+        {/* Subtle gradient overlay - Fixed positioning */}
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
         
         <div className="relative flex items-center justify-between">
           <div className="flex items-center space-x-8">
@@ -90,6 +90,21 @@ const Header: React.FC = () => {
                 <span>Code</span>
                 <div className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300 ${
                   isActive('/code') ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}></div>
+              </Link>
+              
+              <Link 
+                to="/cheatsheet" 
+                className={`flex items-center space-x-2 transition-all duration-300 text-sm font-medium tracking-wide relative group ${
+                  isActive('/cheatsheet') 
+                    ? 'text-cyan-400' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                <span>Cheatsheet</span>
+                <div className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300 ${
+                  isActive('/cheatsheet') ? 'w-full' : 'w-0 group-hover:w-full'
                 }`}></div>
               </Link>
             </nav>
