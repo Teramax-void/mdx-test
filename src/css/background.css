@@ -6,30 +6,20 @@
   height: 100vh;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.3;
+  opacity: 0.2; /* Reduced opacity */
   background: transparent;
+  /* Optimized for GPU performance */
+  will-change: auto;
+  transform: translateZ(0); /* Force GPU acceleration efficiently */
 }
 
-/* Theme-based canvas styling */
-.theme-modern-dark .background-canvas {
-  filter: hue-rotate(0deg) brightness(1.2);
-}
-
-.theme-blue-professional .background-canvas {
-  filter: hue-rotate(200deg) brightness(1.3);
-}
-
-.theme-deep-purple .background-canvas {
-  filter: hue-rotate(280deg) brightness(1.1);
-}
-
-/* Animation states */
+/* Simplified animation states */
 .background-canvas.animate-in {
-  animation: fadeIn 1s ease-in-out;
+  animation: fadeIn 0.5s ease-out; /* Shorter animation */
 }
 
 .background-canvas.animate-out {
-  animation: fadeOut 0.5s ease-in-out;
+  animation: fadeOut 0.3s ease-out; /* Shorter animation */
 }
 
 @keyframes fadeIn {
@@ -37,13 +27,13 @@
     opacity: 0;
   }
   to {
-    opacity: 0.3;
+    opacity: 0.2;
   }
 }
 
 @keyframes fadeOut {
   from {
-    opacity: 0.3;
+    opacity: 0.2;
   }
   to {
     opacity: 0;
@@ -53,7 +43,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .background-canvas {
-    opacity: 0.2;
+    opacity: 0.1; /* Further reduced on mobile */
   }
 }
 
@@ -61,5 +51,12 @@
 @media (prefers-reduced-motion: reduce) {
   .background-canvas {
     display: none;
+  }
+}
+
+/* Performance optimization for low-end devices */
+@media (max-width: 480px) {
+  .background-canvas {
+    display: none; /* Disable on very small screens */
   }
 }

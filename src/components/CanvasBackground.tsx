@@ -26,7 +26,7 @@ const CanvasBackground = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Particle class
+    // Optimized Particle class
     class Particle {
       x: number;
       y: number;
@@ -38,10 +38,10 @@ const CanvasBackground = () => {
       constructor(canvasWidth: number, canvasHeight: number) {
         this.x = Math.random() * canvasWidth;
         this.y = Math.random() * canvasHeight;
-        this.vx = (Math.random() - 0.5) * 1;
-        this.vy = (Math.random() - 0.5) * 1;
-        this.radius = Math.random() * 3 + 2;
-        this.opacity = Math.random() * 0.8 + 0.4;
+        this.vx = (Math.random() - 0.5) * 0.5; // Reduced speed
+        this.vy = (Math.random() - 0.5) * 0.5; // Reduced speed
+        this.radius = Math.random() * 2 + 1; // Smaller particles
+        this.opacity = Math.random() * 0.6 + 0.2; // Reduced opacity range
       }
       
       update(canvasWidth: number, canvasHeight: number) {
@@ -61,82 +61,67 @@ const CanvasBackground = () => {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         
-        // Theme-based colors with higher opacity
-        let color = 'rgba(6, 182, 212, '; // cyan-500
-        if (settings.themeVariant === 'blue-professional') {
-          color = 'rgba(59, 130, 246, '; // blue-500
-        } else if (settings.themeVariant === 'deep-purple') {
-          color = 'rgba(147, 51, 234, '; // purple-600
-        }
-        
-        ctx.fillStyle = color + this.opacity + ')';
+        // Simplified colors without theme variants
+        ctx.fillStyle = `rgba(6, 182, 212, ${this.opacity})`;
         ctx.fill();
         
-        // Add glow effect
-        ctx.shadowColor = color + '0.5)';
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        // Removed glow effect for performance
       }
     }
 
-    // Create more particles for better visibility
-    const particleCount = Math.min(120, Math.floor((canvas.width * canvas.height) / 10000));
+    // Reduced particle count for better performance
+    const particleCount = Math.min(40, Math.floor((canvas.width * canvas.height) / 25000));
     particlesRef.current = [];
     for (let i = 0; i < particleCount; i++) {
       particlesRef.current.push(new Particle(canvas.width, canvas.height));
     }
 
-    // Animation loop
-    function animate() {
+    let lastTime = 0;
+    const targetFPS = 30; // Reduced from 60fps to 30fps
+    const frameInterval = 1000 / targetFPS;
+
+    // Optimized animation loop with frame rate limiting
+    function animate(currentTime: number) {
       if (!running) return;
       
-      // Clear with slight trail effect
-      ctx!.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
-      
-      // Update and draw particles
-      particlesRef.current.forEach((particle: any) => {
-        particle.update(canvas!.width, canvas!.height);
-        particle.draw(ctx!);
-      });
-      
-      // Draw connections between close particles
-      for (let i = 0; i < particlesRef.current.length; i++) {
-        for (let j = i + 1; j < particlesRef.current.length; j++) {
-          const dx = particlesRef.current[i].x - particlesRef.current[j].x;
-          const dy = particlesRef.current[i].y - particlesRef.current[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          if (distance < 150) {
-            ctx!.beginPath();
-            ctx!.moveTo(particlesRef.current[i].x, particlesRef.current[i].y);
-            ctx!.lineTo(particlesRef.current[j].x, particlesRef.current[j].y);
+      if (currentTime - lastTime >= frameInterval) {
+        // Clear canvas efficiently
+        ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+        
+        // Update and draw particles
+        particlesRef.current.forEach((particle: any) => {
+          particle.update(canvas!.width, canvas!.height);
+          particle.draw(ctx!);
+        });
+        
+        // Simplified connection drawing with reduced distance
+        for (let i = 0; i < particlesRef.current.length; i++) {
+          for (let j = i + 1; j < particlesRef.current.length; j++) {
+            const dx = particlesRef.current[i].x - particlesRef.current[j].x;
+            const dy = particlesRef.current[i].y - particlesRef.current[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
             
-            const opacity = (1 - distance / 150) * 0.6;
-            let strokeColor = 'rgba(6, 182, 212, '; // cyan-500
-            if (settings.themeVariant === 'blue-professional') {
-              strokeColor = 'rgba(59, 130, 246, '; // blue-500
-            } else if (settings.themeVariant === 'deep-purple') {
-              strokeColor = 'rgba(147, 51, 234, '; // purple-600
+            if (distance < 100) { // Reduced connection distance
+              ctx!.beginPath();
+              ctx!.moveTo(particlesRef.current[i].x, particlesRef.current[i].y);
+              ctx!.lineTo(particlesRef.current[j].x, particlesRef.current[j].y);
+              
+              const opacity = (1 - distance / 100) * 0.3; // Reduced opacity
+              ctx!.strokeStyle = `rgba(6, 182, 212, ${opacity})`;
+              ctx!.lineWidth = 0.5; // Thinner lines
+              ctx!.stroke();
             }
-            
-            ctx!.strokeStyle = strokeColor + opacity + ')';
-            ctx!.lineWidth = 1;
-            ctx!.stroke();
           }
         }
+        
+        lastTime = currentTime;
       }
       
       animationRef.current = requestAnimationFrame(animate);
     }
     
-    // Start animation after a small delay to ensure canvas is ready
-    setTimeout(() => {
-      if (running) {
-        animationRef.current = requestAnimationFrame(animate);
-      }
-    }, 100);
+    // Start animation
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
       running = false;
@@ -145,7 +130,7 @@ const CanvasBackground = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [settings.backgroundAnimation, settings.themeVariant]);
+  }, [settings.backgroundAnimation]);
 
   if (!settings.backgroundAnimation) return null;
   
@@ -153,7 +138,7 @@ const CanvasBackground = () => {
     <canvas
       ref={canvasRef}
       id="background-canvas"
-      className={`background-canvas theme-${settings.themeVariant} animate-in`}
+      className="background-canvas animate-in"
       aria-hidden="true"
     />
   );
