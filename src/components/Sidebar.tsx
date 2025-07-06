@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, BookOpen, Code, Calculator, CreditCard, User, Copy, Check, Terminal, X, ChevronLeft, Menu } from 'lucide-react';
+import { useSettings } from '../contexts/SettingsContext';
 
 interface CodeExample {
   name: string;
@@ -19,6 +20,49 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
   const [isCodeExamplesOpen, setIsCodeExamplesOpen] = useState(true);
   const [selectedExample, setSelectedExample] = useState<CodeExample | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const { settings } = useSettings();
+
+  // Dynamic theme classes
+  const getThemeClasses = () => {
+    if (settings.theme === 'light') {
+      return {
+        background: 'bg-white',
+        border: 'border-gray-200',
+        text: {
+          primary: 'text-gray-900',
+          secondary: 'text-gray-600',
+          muted: 'text-gray-500'
+        },
+        button: {
+          hover: 'hover:bg-gray-100',
+          active: 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-gray-900 border-cyan-500/20',
+          inactive: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+        },
+        card: 'bg-gray-50 border-gray-200',
+        modal: 'bg-white border-gray-200',
+        overlay: 'bg-black/60'
+      };
+    }
+    return {
+      background: 'bg-black',
+      border: 'border-gray-800',
+      text: {
+        primary: 'text-white',
+        secondary: 'text-gray-400',
+        muted: 'text-gray-500'
+      },
+      button: {
+        hover: 'hover:bg-gray-900/50',
+        active: 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-400 border-cyan-500/30',
+        inactive: 'text-gray-400 hover:text-white hover:bg-gray-900/50'
+      },
+      card: 'bg-gray-900/50 border-gray-700/50',
+      modal: 'bg-black border-gray-800',
+      overlay: 'bg-black/80'
+    };
+  };
+
+  const themeClasses = getThemeClasses();
 
   const codeExamples: CodeExample[] = [
     { 
@@ -153,7 +197,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
 
   return (
     <>
-      <div className={`bg-black border-r border-gray-800 h-full overflow-y-auto relative transition-all duration-300 ease-in-out ${
+      <div className={`${themeClasses.background} ${themeClasses.border} h-full overflow-y-auto relative transition-all duration-300 ease-in-out ${
         isCollapsed ? 'w-12' : 'w-80'
       }`}>
         {/* Subtle gradient overlay */}
@@ -163,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
         <div className={`absolute top-3 z-20 ${isCollapsed ? 'left-1/2 transform -translate-x-1/2' : 'right-3'}`}>
           <button
             onClick={onToggleCollapse}
-            className="p-2 text-gray-400 hover:text-cyan-400 hover:bg-gray-800/50 rounded-md transition-all duration-300 group border border-transparent hover:border-gray-700"
+            className={`p-2 ${themeClasses.text.secondary} hover:text-cyan-400 ${themeClasses.button.hover} rounded-md transition-all duration-300 group border border-transparent hover:${themeClasses.border}`}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? (
@@ -179,15 +223,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
           <div className="relative pt-14 px-1 space-y-3 flex flex-col items-center">
             {/* Collapsed Navigation Icons */}
             <div className="space-y-3 flex flex-col items-center w-full">
-              <div className="p-2 text-gray-400 hover:text-cyan-400 hover:bg-gray-800/50 rounded-lg transition-all duration-300 cursor-pointer group w-8 h-8 flex items-center justify-center" title="Learning">
+              <div className={`p-2 ${themeClasses.text.secondary} hover:text-cyan-400 ${themeClasses.button.hover} rounded-lg transition-all duration-300 cursor-pointer group w-8 h-8 flex items-center justify-center`} title="Learning">
                 <BookOpen className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <div className="p-2 text-cyan-400 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg border border-cyan-500/20 cursor-pointer group w-8 h-8 flex items-center justify-center" title="Code Editor">
+              <div className={`p-2 text-cyan-400 ${themeClasses.active} rounded-lg cursor-pointer group w-8 h-8 flex items-center justify-center`} title="Code Editor">
                 <Code className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
               </div>
             </div>
             
-            <div className="w-6 h-px bg-gray-800 my-2"></div>
+            <div className={`w-6 h-px ${themeClasses.border} my-2`}></div>
             
             {/* Collapsed Code Examples */}
             <div className="space-y-3 flex flex-col items-center w-full">
@@ -197,8 +241,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
                   onClick={() => openCodeModal(example)}
                   className={`p-2 rounded-lg transition-all duration-300 group w-8 h-8 flex items-center justify-center ${
                     example.active
-                      ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-400 border border-cyan-500/30'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-900/50 border border-transparent hover:border-gray-700'
+                      ? `${themeClasses.button.active} shadow-lg shadow-cyan-500/10`
+                      : `${themeClasses.text.secondary} ${themeClasses.button.hover} border border-transparent hover:${themeClasses.border}`
                   }`}
                   title={example.name}
                 >
@@ -218,10 +262,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
             <div className="mb-8">
               <button
                 onClick={() => setIsNavigationOpen(!isNavigationOpen)}
-                className="flex items-center justify-between w-full text-white font-medium mb-4 hover:text-cyan-400 transition-all duration-300 group"
+                className={`flex items-center justify-between w-full ${themeClasses.text.primary} font-medium mb-4 hover:text-cyan-400 transition-all duration-300 group`}
               >
                 <span className="text-sm tracking-widest font-semibold">NAVIGATION</span>
-                <div className="p-1 rounded-md group-hover:bg-gray-800/50 transition-all duration-300">
+                <div className={`p-1 rounded-md group-hover:${themeClasses.button.hover} transition-all duration-300`}>
                   {isNavigationOpen ? 
                     <ChevronDown className="w-4 h-4 transition-transform duration-300" /> : 
                     <ChevronRight className="w-4 h-4 transition-transform duration-300" />
@@ -231,11 +275,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
               
               {isNavigationOpen && (
                 <div className="space-y-2">
-                  <a href="#" className="flex items-center space-x-3 text-gray-400 hover:text-white hover:bg-gray-900/50 px-4 py-3 rounded-lg transition-all duration-300 group border border-transparent hover:border-gray-700">
+                  <a href="#" className={`flex items-center space-x-3 ${themeClasses.text.secondary} ${themeClasses.text.primary} ${themeClasses.button.hover} px-4 py-3 rounded-lg transition-all duration-300 group border border-transparent hover:${themeClasses.border}`}>
                     <BookOpen className="w-4 h-4 group-hover:text-cyan-400 transition-colors duration-300" />
                     <span className="text-sm font-medium">Learning</span>
                   </a>
-                  <a href="#" className="flex items-center space-x-3 text-cyan-400 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 px-4 py-3 rounded-lg border border-cyan-500/20 relative overflow-hidden group">
+                  <a href="#" className={`flex items-center space-x-3 text-cyan-400 ${themeClasses.button.active} px-4 py-3 rounded-lg relative overflow-hidden group`}>
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <Code className="w-4 h-4 relative z-10" />
                     <span className="text-sm font-medium relative z-10">Code Editor</span>
@@ -248,14 +292,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
             <div>
               <button
                 onClick={() => setIsCodeExamplesOpen(!isCodeExamplesOpen)}
-                className="flex items-center justify-between w-full text-white font-medium mb-4 hover:text-cyan-400 transition-all duration-300 group"
+                className={`flex items-center justify-between w-full ${themeClasses.text.primary} font-medium mb-4 hover:text-cyan-400 transition-all duration-300 group`}
               >
                 <span className="text-sm tracking-widest font-semibold">QUICK TEMPLATES</span>
                 <div className="flex items-center space-x-2">
                   <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-black px-2 py-1 rounded-md text-xs font-bold">
                     {codeExamples.length}
                   </span>
-                  <div className="p-1 rounded-md group-hover:bg-gray-800/50 transition-all duration-300">
+                  <div className={`p-1 rounded-md group-hover:${themeClasses.button.hover} transition-all duration-300`}>
                     {isCodeExamplesOpen ? 
                       <ChevronDown className="w-4 h-4 transition-transform duration-300" /> : 
                       <ChevronRight className="w-4 h-4 transition-transform duration-300" />
@@ -272,22 +316,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
                       onClick={() => openCodeModal(example)}
                       className={`flex items-center justify-between w-full px-4 py-3 rounded-lg transition-all duration-300 group border ${
                         example.active
-                          ? 'bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-white border-cyan-500/30 shadow-lg shadow-cyan-500/10'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-900/50 border-transparent hover:border-gray-700'
+                          ? `${themeClasses.button.active} shadow-lg shadow-cyan-500/10`
+                          : `${themeClasses.button.inactive} border-transparent hover:${themeClasses.border}`
                       }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className={`p-1.5 rounded-md transition-all duration-300 ${
                           example.active 
                             ? 'bg-cyan-500/20 text-cyan-400' 
-                            : 'bg-gray-800/50 group-hover:bg-gray-700/50 group-hover:text-cyan-400'
+                            : `${themeClasses.card} group-hover:bg-gray-700/50 group-hover:text-cyan-400`
                         }`}>
                           {example.icon}
                         </div>
                         <span className="text-sm font-medium">{example.name}</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs text-gray-500 font-medium">VIEW</span>
+                        <span className={`text-xs ${themeClasses.text.muted} font-medium`}>VIEW</span>
                         <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
                       </div>
                     </button>
@@ -301,22 +345,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
 
       {/* Code Example Modal */}
       {selectedExample && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-black border border-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+        <div className={`fixed inset-0 ${themeClasses.overlay} backdrop-blur-sm z-50 flex items-center justify-center p-4`}>
+          <div className={`${themeClasses.modal} rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative`}>
             {/* Animated background gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-transparent opacity-50"></div>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400"></div>
             
             <div className="relative">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-800">
+              <div className={`flex items-center justify-between p-6 border-b ${themeClasses.border}`}>
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
                     {selectedExample.icon}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white tracking-wide">{selectedExample.name}</h3>
-                    <p className="text-gray-400 text-sm tracking-wide">{selectedExample.description}</p>
+                    <h3 className={`text-2xl font-bold ${themeClasses.text.primary} tracking-wide`}>{selectedExample.name}</h3>
+                    <p className={`${themeClasses.text.secondary} text-sm tracking-wide`}>{selectedExample.description}</p>
                   </div>
                 </div>
                 
@@ -340,7 +384,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
                   
                   <button
                     onClick={closeCodeModal}
-                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 border border-gray-700 hover:border-gray-600"
+                    className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} ${themeClasses.button.hover} rounded-lg transition-all duration-300 border ${themeClasses.border} hover:border-gray-600`}
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -349,25 +393,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
               
               {/* Code Content */}
               <div className="p-6 max-h-[70vh] overflow-y-auto">
-                <div className="bg-gray-900/50 rounded-lg border border-gray-700/50 overflow-hidden">
-                  <div className="bg-gradient-to-r from-gray-900/80 to-gray-800/80 px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+                <div className={`${themeClasses.card} rounded-lg overflow-hidden`}>
+                  <div className={`bg-gradient-to-r from-gray-900/80 to-gray-800/80 px-4 py-3 border-b ${themeClasses.border} flex items-center justify-between`}>
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center space-x-2">
                         <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                       </div>
-                      <span className="text-sm text-gray-400 font-mono">{selectedExample.name}.java</span>
+                      <span className={`text-sm ${themeClasses.text.secondary} font-mono`}>{selectedExample.name}.java</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <div className={`flex items-center space-x-2 text-xs ${themeClasses.text.muted}`}>
                       <span>JAVA</span>
-                      <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
+                      <div className={`w-1 h-1 ${themeClasses.text.muted} rounded-full`}></div>
                       <span>UTF-8</span>
                     </div>
                   </div>
                   
-                  <div className="p-6 bg-black/30">
-                    <pre className="text-sm text-gray-300 overflow-x-auto font-mono leading-relaxed">
+                  <div className={`p-6 ${settings.theme === 'light' ? 'bg-gray-100' : 'bg-black/30'}`}>
+                    <pre className={`text-sm ${themeClasses.text.primary} overflow-x-auto font-mono leading-relaxed`}>
                       <code className="language-java">{selectedExample.code}</code>
                     </pre>
                   </div>
@@ -375,11 +419,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleCollapse
                 
                 {/* Usage Tips */}
                 <div className="mt-6 p-4 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-lg border border-cyan-500/30">
-                  <h4 className="text-white font-bold mb-2 flex items-center space-x-2">
+                  <h4 className={`${themeClasses.text.primary} font-bold mb-2 flex items-center space-x-2`}>
                     <span className="text-cyan-400">💡</span>
                     <span className="tracking-wide">USAGE TIP</span>
                   </h4>
-                  <p className="text-gray-300 text-sm leading-relaxed">
+                  <p className={`${themeClasses.text.secondary} text-sm leading-relaxed`}>
                     Copy this code and paste it into the editor above to see it in action. You can modify and experiment with the code to better understand the concepts.
                   </p>
                 </div>

@@ -2,19 +2,55 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Settings, Sun, Zap, Home, BookOpen, Code, Layers, FileText } from 'lucide-react';
 import SettingsHover from './SettingsHover';
+import { useSettings } from '../contexts/SettingsContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
+  const { settings } = useSettings();
 
   const isActive = (path: string) => {
     return location.pathname === path || (path === '/home' && location.pathname === '/');
   };
 
+  // Dynamic theme classes
+  const getHeaderClasses = () => {
+    if (settings.theme === 'light') {
+      return 'fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-6 py-4 relative overflow-hidden z-[9999]';
+    }
+    return 'fixed top-0 left-0 right-0 bg-black border-b border-gray-800 px-6 py-4 relative overflow-hidden z-[9999]';
+  };
+
+  const getTextClasses = () => {
+    if (settings.theme === 'light') {
+      return {
+        primary: 'text-gray-900',
+        secondary: 'text-gray-600',
+        muted: 'text-gray-500',
+        hover: 'hover:text-gray-900',
+        active: 'text-cyan-600'
+      };
+    }
+    return {
+      primary: 'text-white',
+      secondary: 'text-gray-400',
+      muted: 'text-gray-500',
+      hover: 'hover:text-white',
+      active: 'text-cyan-400'
+    };
+  };
+
+  const textClasses = getTextClasses();
+
   return (
     <>
+<<<<<<< HEAD
       <header className="fixed top-0 left-0 right-0 bg-black border-b border-gray-800 px-6 py-4 relative overflow-hidden z-50 will-change-auto">
         {/* Subtle gradient overlay - Fixed positioning */}
+=======
+      <header className={getHeaderClasses()}>
+        {/* Subtle gradient overlay */}
+>>>>>>> 7e3bf3b19f5716225a73b3c4bfb6a752bd15f7b8
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
         
         <div className="relative flex items-center justify-between">
@@ -27,7 +63,7 @@ const Header: React.FC = () => {
                 <div className="absolute -inset-1 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg blur opacity-30 animate-pulse group-hover:opacity-50 transition-opacity duration-300"></div>
               </div>
               <div>
-                <span className="text-white font-bold text-xl tracking-wide group-hover:text-cyan-400 transition-colors duration-300">PRO192</span>
+                <span className={`${textClasses.primary} font-bold text-xl tracking-wide group-hover:text-cyan-400 transition-colors duration-300`}>PRO192</span>
                 <div className="text-xs text-cyan-400 font-medium tracking-widest">JAVA EDITION</div>
               </div>
             </Link>
@@ -37,8 +73,8 @@ const Header: React.FC = () => {
                 to="/home" 
                 className={`flex items-center space-x-2 transition-all duration-300 text-sm font-medium tracking-wide relative group ${
                   isActive('/home') 
-                    ? 'text-cyan-400' 
-                    : 'text-gray-400 hover:text-white'
+                    ? textClasses.active
+                    : `${textClasses.secondary} ${textClasses.hover}`
                 }`}
               >
                 <Home className="w-4 h-4" />
@@ -52,8 +88,8 @@ const Header: React.FC = () => {
                 to="/documentation" 
                 className={`flex items-center space-x-2 transition-all duration-300 text-sm font-medium tracking-wide relative group ${
                   isActive('/documentation') 
-                    ? 'text-cyan-400' 
-                    : 'text-gray-400 hover:text-white'
+                    ? textClasses.active
+                    : `${textClasses.secondary} ${textClasses.hover}`
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
@@ -67,8 +103,8 @@ const Header: React.FC = () => {
                 to="/components" 
                 className={`flex items-center space-x-2 transition-all duration-300 text-sm font-medium tracking-wide relative group ${
                   isActive('/components') 
-                    ? 'text-cyan-400' 
-                    : 'text-gray-400 hover:text-white'
+                    ? textClasses.active
+                    : `${textClasses.secondary} ${textClasses.hover}`
                 }`}
               >
                 <Layers className="w-4 h-4" />
@@ -82,8 +118,8 @@ const Header: React.FC = () => {
                 to="/code" 
                 className={`flex items-center space-x-2 transition-all duration-300 text-sm font-medium tracking-wide relative group ${
                   isActive('/code') 
-                    ? 'text-cyan-400' 
-                    : 'text-gray-400 hover:text-white'
+                    ? textClasses.active
+                    : `${textClasses.secondary} ${textClasses.hover}`
                 }`}
               >
                 <Code className="w-4 h-4" />
@@ -111,18 +147,18 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 group">
+            <button className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:bg-gray-800/50 rounded-lg transition-all duration-300 group`}>
               <Sun className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
             </button>
             <button 
               onClick={() => setShowSettings(true)}
-              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300"
+              className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:bg-gray-800/50 rounded-lg transition-all duration-300`}
             >
               <Settings className="w-5 h-5" />
             </button>
-            <div className="flex items-center space-x-3 bg-gray-900/50 border border-gray-700 rounded-lg px-4 py-2 hover:border-cyan-500/50 transition-all duration-300 group">
-              <Search className="w-4 h-4 text-gray-400 group-hover:text-cyan-400 transition-colors duration-300" />
-              <span className="text-sm text-gray-400 group-hover:text-white transition-colors duration-300">Search</span>
+            <div className={`flex items-center space-x-3 ${settings.theme === 'light' ? 'bg-gray-100 border-gray-200' : 'bg-gray-900/50 border-gray-700'} border rounded-lg px-4 py-2 hover:border-cyan-500/50 transition-all duration-300 group`}>
+              <Search className={`w-4 h-4 ${textClasses.secondary} group-hover:text-cyan-400 transition-colors duration-300`} />
+              <span className={`text-sm ${textClasses.secondary} group-hover:${textClasses.primary} transition-colors duration-300`}>Search</span>
             </div>
           </div>
         </div>
