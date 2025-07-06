@@ -13,7 +13,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-black border-b border-gray-800 px-6 py-4 relative overflow-hidden z-50 will-change-auto">
+      <header className="fixed top-0 left-0 right-0 bg-black border-b border-gray-800 px-6 py-4 relative overflow-hidden z-[9999] will-change-auto">
         {/* Subtle gradient overlay - Fixed positioning */}
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
         
