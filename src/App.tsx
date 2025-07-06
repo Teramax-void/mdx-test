@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import Header from './components/Header';
-import CanvasBackground from './components/CanvasBackground';
 import HomePage from './pages/HomePage';
 import DocumentationPage from './pages/DocumentationPage';
 import ComponentsPage from './pages/ComponentsPage';
@@ -17,32 +16,23 @@ function AppContent() {
     if (settings.theme === 'light') {
       return 'min-h-screen bg-white relative';
     }
-    return 'min-h-screen bg-black relative';
+    return 'min-h-screen relative';
   };
-
-  const getBackgroundClasses = () => {
-    if (settings.theme === 'light') {
-      return {
-        primary: 'fixed inset-0 bg-gradient-to-br from-gray-100 via-white to-gray-100',
-        secondary: 'fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-purple-500/10'
-      };
-    }
-    return {
-      primary: 'fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900',
-      secondary: 'fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-purple-500/10'
-    };
-  };
-
-  const backgroundClasses = getBackgroundClasses();
 
   return (
     <div className={getAppClasses()}>
-      {/* Static background gradients - Fixed to viewport */}
-      <div className={backgroundClasses.primary}></div>
-      <div className={backgroundClasses.secondary}></div>
+      {/* Cyber Grid Background - Only for dark theme */}
+      {settings.theme === 'dark' && (
+        <div className="cyber-grid-background"></div>
+      )}
       
-      {/* Canvas Background Animation - Fixed to viewport */}
-      <CanvasBackground />
+      {/* Light theme background */}
+      {settings.theme === 'light' && (
+        <>
+          <div className="fixed inset-0 bg-gradient-to-br from-gray-100 via-white to-gray-100"></div>
+          <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-purple-500/10"></div>
+        </>
+      )}
       
       {/* Header - Fixed at top */}
       <Header />
