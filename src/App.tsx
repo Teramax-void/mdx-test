@@ -7,6 +7,7 @@ import DocumentationPage from './pages/DocumentationPage';
 import ComponentsPage from './pages/ComponentsPage';
 import CodePage from './pages/CodePage';
 import CheatsheetPage from './pages/CheatsheetPage';
+import './css/background.css';
 
 function AppContent() {
   const { settings } = useSettings();
@@ -21,7 +22,7 @@ function AppContent() {
 
   return (
     <div className={getAppClasses()}>
-      {/* Cyber Grid Background - Only for dark theme */}
+      {/* Cyber Grid Background - Always show for dark theme */}
       {settings.theme === 'dark' && (
         <div className="cyber-grid-background"></div>
       )}

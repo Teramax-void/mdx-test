@@ -12,7 +12,7 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  theme: 'dark',
+  theme: 'dark', // Changed default to dark to show the cyber grid
   themeVariant: 'modern-dark',
   backgroundAnimation: true,
 };
