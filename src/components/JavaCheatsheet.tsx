@@ -24,7 +24,6 @@ interface TocItem {
   id: string;
   title: string;
   level: number;
-  collapsed: boolean;
 }
 
 interface CodeBlock {
@@ -34,15 +33,21 @@ interface CodeBlock {
   title?: string;
 }
 
+interface ParsedSection {
+  id: string;
+  title: string;
+  content: string;
+  codeBlocks: CodeBlock[];
+}
+
 const JavaCheatsheet: React.FC = () => {
   const { settings } = useSettings();
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
-  const [highlightedTerm, setHighlightedTerm] = useState('');
 
-  // Parse content into sections with better structure
-  const parsedContent = useMemo(() => {
+  // Parse content once and memoize it
+  const parsedContent = useMemo((): ParsedSection[] => {
     const sections = cheatsheetContent.split(/^## /gm).filter(Boolean);
     return sections.map((section, index) => {
       const lines = section.split('\n');
@@ -70,13 +75,12 @@ const JavaCheatsheet: React.FC = () => {
         id,
         title,
         content,
-        codeBlocks,
-        collapsed: collapsedSections.has(id)
+        codeBlocks
       };
     });
-  }, [cheatsheetContent, collapsedSections]);
+  }, []); // Only depend on the static content
 
-  // Filter content based on search
+  // Filter content based on search - optimized
   const filteredSections = useMemo(() => {
     if (!searchTerm.trim()) return parsedContent;
     
@@ -87,15 +91,32 @@ const JavaCheatsheet: React.FC = () => {
     );
   }, [parsedContent, searchTerm]);
 
-  // Handle search with highlighting
+  // Debounced search to prevent excessive filtering
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  
   useEffect(() => {
-    setHighlightedTerm(searchTerm);
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 150);
+    
+    return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Keyboard shortcuts
+  // Use debounced search for filtering
+  const displayedSections = useMemo(() => {
+    if (!debouncedSearchTerm.trim()) return parsedContent;
+    
+    const searchLower = debouncedSearchTerm.toLowerCase();
+    return parsedContent.filter(section => 
+      section.title.toLowerCase().includes(searchLower) ||
+      section.content.toLowerCase().includes(searchLower)
+    );
+  }, [parsedContent, debouncedSearchTerm]);
+
+  // Keyboard shortcuts - optimized
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey && e.target !== document.getElementById('cheatsheet-search')) {
         e.preventDefault();
         const searchInput = document.getElementById('cheatsheet-search') as HTMLInputElement;
         searchInput?.focus();
@@ -103,7 +124,6 @@ const JavaCheatsheet: React.FC = () => {
       
       if (e.key === 'Escape') {
         setSearchTerm('');
-        setHighlightedTerm('');
       }
     };
 
@@ -111,6 +131,7 @@ const JavaCheatsheet: React.FC = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Optimized copy handler
   const handleCopyCode = useCallback(async (code: string, id: string) => {
     try {
       await navigator.clipboard.writeText(code);
@@ -121,6 +142,7 @@ const JavaCheatsheet: React.FC = () => {
     }
   }, []);
 
+  // Optimized toggle handler
   const toggleSection = useCallback((sectionId: string) => {
     setCollapsedSections(prev => {
       const newSet = new Set(prev);
@@ -133,7 +155,8 @@ const JavaCheatsheet: React.FC = () => {
     });
   }, []);
 
-  const highlightText = (text: string, highlight: string) => {
+  // Optimized highlight function
+  const highlightText = useCallback((text: string, highlight: string) => {
     if (!highlight.trim()) return text;
     
     const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -146,12 +169,12 @@ const JavaCheatsheet: React.FC = () => {
         </mark>
       ) : part
     );
-  };
+  }, []);
 
   const isDarkMode = settings.theme === 'dark';
 
-  // Theme classes
-  const getThemeClasses = () => {
+  // Memoized theme classes
+  const themeClasses = useMemo(() => {
     if (settings.theme === 'light') {
       return {
         background: 'bg-gray-50',
@@ -180,25 +203,23 @@ const JavaCheatsheet: React.FC = () => {
       section: 'bg-black/30 border-gray-800',
       code: 'bg-gray-900/50 border-gray-700'
     };
-  };
+  }, [settings.theme]);
 
-  const themeClasses = getThemeClasses();
-
-  // Custom markdown components for minimal design
+  // Memoized markdown components
   const markdownComponents = useMemo(() => ({
     h3: ({ children, ...props }: any) => (
       <h3 className={`text-lg font-semibold ${themeClasses.text.primary} mb-3 mt-6 first:mt-0`} {...props}>
-        {highlightText(String(children), highlightedTerm)}
+        {highlightText(String(children), debouncedSearchTerm)}
       </h3>
     ),
     h4: ({ children, ...props }: any) => (
       <h4 className={`text-base font-medium ${themeClasses.text.primary} mb-2 mt-4`} {...props}>
-        {highlightText(String(children), highlightedTerm)}
+        {highlightText(String(children), debouncedSearchTerm)}
       </h4>
     ),
     p: ({ children, ...props }: any) => (
       <p className={`${themeClasses.text.secondary} leading-relaxed mb-4 text-sm`} {...props}>
-        {typeof children === 'string' ? highlightText(children, highlightedTerm) : children}
+        {typeof children === 'string' ? highlightText(children, debouncedSearchTerm) : children}
       </p>
     ),
     ul: ({ children, ...props }: any) => (
@@ -209,7 +230,7 @@ const JavaCheatsheet: React.FC = () => {
     li: ({ children, ...props }: any) => (
       <li className="flex items-start space-x-2" {...props}>
         <div className="w-1 h-1 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
-        <span>{typeof children === 'string' ? highlightText(children, highlightedTerm) : children}</span>
+        <span>{typeof children === 'string' ? highlightText(children, debouncedSearchTerm) : children}</span>
       </li>
     ),
     code: ({ node, inline, className, children, ...props }: any) => {
@@ -223,10 +244,118 @@ const JavaCheatsheet: React.FC = () => {
           </code>
         );
       }
-      return null; // Block code handled separately
+      return null;
     },
-    pre: () => null, // Prevent default pre rendering
-  }), [themeClasses, highlightedTerm]);
+    pre: () => null,
+  }), [themeClasses, debouncedSearchTerm, highlightText]);
+
+  // Memoized section component to prevent unnecessary re-renders
+  const SectionComponent = React.memo(({ section }: { section: ParsedSection }) => {
+    const isCollapsed = collapsedSections.has(section.id);
+    
+    return (
+      <div className={`${themeClasses.section} rounded-lg border overflow-hidden`}>
+        {/* Section Header */}
+        <button
+          onClick={() => toggleSection(section.id)}
+          className="w-full flex items-center justify-between p-4 hover:bg-gray-800/30 transition-colors duration-200 group"
+        >
+          <div className="flex items-center space-x-3">
+            <div className="p-1.5 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-md border border-cyan-500/30 group-hover:scale-105 transition-transform duration-200">
+              <Code2 className="w-4 h-4 text-cyan-400" />
+            </div>
+            <h2 className={`text-xl font-bold ${themeClasses.text.primary} text-left`}>
+              {highlightText(section.title, debouncedSearchTerm)}
+            </h2>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            {section.codeBlocks.length > 0 && (
+              <span className="text-xs px-2 py-1 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+                {section.codeBlocks.length} example{section.codeBlocks.length !== 1 ? 's' : ''}
+              </span>
+            )}
+            {isCollapsed ? (
+              <ChevronDown className={`w-5 h-5 ${themeClasses.text.secondary} group-hover:text-cyan-400 transition-colors duration-200`} />
+            ) : (
+              <ChevronUp className={`w-5 h-5 ${themeClasses.text.secondary} group-hover:text-cyan-400 transition-colors duration-200`} />
+            )}
+          </div>
+        </button>
+
+        {/* Section Content - Only render when not collapsed */}
+        {!isCollapsed && (
+          <div className="px-4 pb-4">
+            {/* Text Content */}
+            <div className="prose prose-sm max-w-none mb-6">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={markdownComponents}
+              >
+                {section.content.replace(/```[\s\S]*?```/g, '')}
+              </ReactMarkdown>
+            </div>
+
+            {/* Code Examples */}
+            {section.codeBlocks.map((codeBlock) => (
+              <div key={codeBlock.id} className={`mb-4 last:mb-0 ${themeClasses.code} rounded-lg border overflow-hidden`}>
+                {/* Code Header */}
+                <div className={`flex items-center justify-between px-4 py-2 border-b ${themeClasses.border} bg-gray-900/20`}>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    </div>
+                    <span className={`text-xs ${themeClasses.text.muted} font-mono`}>
+                      {codeBlock.language}
+                    </span>
+                  </div>
+                  
+                  <button
+                    onClick={() => handleCopyCode(codeBlock.code, codeBlock.id)}
+                    className={`flex items-center space-x-1 text-xs ${themeClasses.text.secondary} hover:text-cyan-400 transition-colors duration-200 group`}
+                  >
+                    {copiedCode === codeBlock.id ? (
+                      <>
+                        <Check className="w-3 h-3 text-green-400" />
+                        <span className="text-green-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3 group-hover:scale-110 transition-transform duration-200" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                {/* Code Content */}
+                <div className="overflow-x-auto">
+                  <SyntaxHighlighter
+                    style={isDarkMode ? oneDark : oneLight}
+                    language={codeBlock.language}
+                    PreTag="div"
+                    customStyle={{
+                      margin: 0,
+                      padding: '1rem',
+                      background: 'transparent',
+                      fontSize: '0.8rem',
+                      lineHeight: '1.4',
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+                    }}
+                  >
+                    {codeBlock.code}
+                  </SyntaxHighlighter>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  });
 
   return (
     <div className={`min-h-screen ${themeClasses.background}`}>
@@ -247,10 +376,10 @@ const JavaCheatsheet: React.FC = () => {
             
             {/* Quick Actions */}
             <div className="flex items-center space-x-2">
-              <button className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:bg-gray-800/50 rounded-lg transition-all duration-300`}>
+              <button className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:bg-gray-800/50 rounded-lg transition-all duration-200`}>
                 <Download className="w-4 h-4" />
               </button>
-              <button className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:bg-gray-800/50 rounded-lg transition-all duration-300`}>
+              <button className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:bg-gray-800/50 rounded-lg transition-all duration-200`}>
                 <ExternalLink className="w-4 h-4" />
               </button>
             </div>
@@ -265,12 +394,12 @@ const JavaCheatsheet: React.FC = () => {
               placeholder="Search cheatsheet... (Press / to focus)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full ${themeClasses.input} border rounded-lg pl-10 pr-4 py-2.5 focus:border-cyan-500 focus:outline-none transition-all duration-300 text-sm`}
+              className={`w-full ${themeClasses.input} border rounded-lg pl-10 pr-4 py-2.5 focus:border-cyan-500 focus:outline-none transition-all duration-200 text-sm`}
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${themeClasses.text.muted} hover:${themeClasses.text.primary} transition-colors duration-300`}
+                className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${themeClasses.text.muted} hover:${themeClasses.text.primary} transition-colors duration-200`}
               >
                 ×
               </button>
@@ -282,12 +411,12 @@ const JavaCheatsheet: React.FC = () => {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Search Results Info */}
-        {searchTerm && (
+        {debouncedSearchTerm && (
           <div className={`mb-6 p-3 ${themeClasses.section} rounded-lg border`}>
             <div className="flex items-center space-x-2">
               <Hash className="w-4 h-4 text-cyan-400" />
               <span className={`text-sm ${themeClasses.text.secondary}`}>
-                Found {filteredSections.length} section{filteredSections.length !== 1 ? 's' : ''} matching "{searchTerm}"
+                Found {displayedSections.length} section{displayedSections.length !== 1 ? 's' : ''} matching "{debouncedSearchTerm}"
               </span>
             </div>
           </div>
@@ -295,112 +424,13 @@ const JavaCheatsheet: React.FC = () => {
 
         {/* Sections */}
         <div className="space-y-6">
-          {filteredSections.map((section) => (
-            <div key={section.id} className={`${themeClasses.section} rounded-lg border overflow-hidden`}>
-              {/* Section Header */}
-              <button
-                onClick={() => toggleSection(section.id)}
-                className={`w-full flex items-center justify-between p-4 hover:bg-gray-800/30 transition-all duration-300 group`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="p-1.5 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-md border border-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
-                    <Code2 className="w-4 h-4 text-cyan-400" />
-                  </div>
-                  <h2 className={`text-xl font-bold ${themeClasses.text.primary} text-left`}>
-                    {highlightText(section.title, highlightedTerm)}
-                  </h2>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  {section.codeBlocks.length > 0 && (
-                    <span className={`text-xs px-2 py-1 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30`}>
-                      {section.codeBlocks.length} example{section.codeBlocks.length !== 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {collapsedSections.has(section.id) ? (
-                    <ChevronDown className={`w-5 h-5 ${themeClasses.text.secondary} group-hover:text-cyan-400 transition-colors duration-300`} />
-                  ) : (
-                    <ChevronUp className={`w-5 h-5 ${themeClasses.text.secondary} group-hover:text-cyan-400 transition-colors duration-300`} />
-                  )}
-                </div>
-              </button>
-
-              {/* Section Content */}
-              {!collapsedSections.has(section.id) && (
-                <div className="px-4 pb-4">
-                  {/* Text Content */}
-                  <div className="prose prose-sm max-w-none mb-6">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeRaw]}
-                      components={markdownComponents}
-                    >
-                      {section.content.replace(/```[\s\S]*?```/g, '')}
-                    </ReactMarkdown>
-                  </div>
-
-                  {/* Code Examples */}
-                  {section.codeBlocks.map((codeBlock, index) => (
-                    <div key={codeBlock.id} className={`mb-4 last:mb-0 ${themeClasses.code} rounded-lg border overflow-hidden`}>
-                      {/* Code Header */}
-                      <div className={`flex items-center justify-between px-4 py-2 border-b ${themeClasses.border} bg-gray-900/20`}>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                          </div>
-                          <span className={`text-xs ${themeClasses.text.muted} font-mono`}>
-                            {codeBlock.language}
-                          </span>
-                        </div>
-                        
-                        <button
-                          onClick={() => handleCopyCode(codeBlock.code, codeBlock.id)}
-                          className={`flex items-center space-x-1 text-xs ${themeClasses.text.secondary} hover:text-cyan-400 transition-colors duration-300 group`}
-                        >
-                          {copiedCode === codeBlock.id ? (
-                            <>
-                              <Check className="w-3 h-3 text-green-400" />
-                              <span className="text-green-400">Copied!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
-                              <span>Copy</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      
-                      {/* Code Content */}
-                      <div className="overflow-x-auto">
-                        <SyntaxHighlighter
-                          style={isDarkMode ? oneDark : oneLight}
-                          language={codeBlock.language}
-                          PreTag="div"
-                          customStyle={{
-                            margin: 0,
-                            padding: '1rem',
-                            background: 'transparent',
-                            fontSize: '0.8rem',
-                            lineHeight: '1.4',
-                            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
-                          }}
-                        >
-                          {codeBlock.code}
-                        </SyntaxHighlighter>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+          {displayedSections.map((section) => (
+            <SectionComponent key={section.id} section={section} />
           ))}
         </div>
 
         {/* No Results */}
-        {searchTerm && filteredSections.length === 0 && (
+        {debouncedSearchTerm && displayedSections.length === 0 && (
           <div className="text-center py-12">
             <div className={`w-16 h-16 ${themeClasses.section} rounded-full flex items-center justify-center mx-auto mb-4 border`}>
               <Search className={`w-6 h-6 ${themeClasses.text.muted}`} />
