@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Settings, Sun, Zap, Home, BookOpen, Code, Layers, FileText } from 'lucide-react';
 import SettingsHover from './SettingsHover';
+import SearchModal from './SearchModal';
 import { useSettings } from '../contexts/SettingsContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const { settings } = useSettings();
 
   const isActive = (path: string) => {
@@ -44,39 +44,13 @@ const Header: React.FC = () => {
 
   const getSearchClasses = () => {
     if (settings.theme === 'light') {
-      return {
-        container: `bg-gray-100 border-gray-200 hover:border-cyan-500/50 focus-within:border-cyan-500 focus-within:bg-white ${isSearchFocused ? 'border-cyan-500 bg-white shadow-lg shadow-cyan-500/10' : ''}`,
-        input: 'bg-transparent text-gray-900 placeholder-gray-500',
-        icon: `${isSearchFocused ? 'text-cyan-500' : 'text-gray-500'} group-hover:text-cyan-500`
-      };
+      return 'bg-gray-100 border-gray-200 hover:border-cyan-500/50 hover:bg-white';
     }
-    return {
-      container: `bg-gray-900/50 border-gray-700 hover:border-cyan-500/50 focus-within:border-cyan-500 focus-within:bg-gray-800/50 ${isSearchFocused ? 'border-cyan-500 bg-gray-800/50 shadow-lg shadow-cyan-500/10' : ''}`,
-      input: 'bg-transparent text-white placeholder-gray-400',
-      icon: `${isSearchFocused ? 'text-cyan-400' : 'text-gray-400'} group-hover:text-cyan-400`
-    };
+    return 'bg-gray-900/50 border-gray-700 hover:border-cyan-500/50 hover:bg-gray-800/50';
   };
 
   const textClasses = getTextClasses();
   const searchClasses = getSearchClasses();
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // Here you would implement search functionality
-      console.log('Searching for:', searchQuery);
-      // For now, we'll just show an alert
-      alert(`Searching for: "${searchQuery}"`);
-    }
-  };
-
-  const handleSearchFocus = () => {
-    setIsSearchFocused(true);
-  };
-
-  const handleSearchBlur = () => {
-    setIsSearchFocused(false);
-  };
 
   return (
     <>
@@ -180,7 +154,6 @@ const Header: React.FC = () => {
             <button className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:bg-gray-800/50 rounded-lg transition-all duration-200 group`}>
               <Sun className="w-5 h-5 group-hover:rotate-45 transition-transform duration-200" />
             </button>
-            
             <button 
               onClick={() => setShowSettings(true)}
               className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:bg-gray-800/50 rounded-lg transition-all duration-200`}
@@ -188,55 +161,24 @@ const Header: React.FC = () => {
               <Settings className="w-5 h-5" />
             </button>
             
-            {/* Enhanced Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="relative">
-              <div className={`flex items-center space-x-3 border rounded-lg px-4 py-2 transition-all duration-300 group min-w-[200px] ${searchClasses.container}`}>
-                <Search className={`w-4 h-4 transition-all duration-300 ${searchClasses.icon}`} />
-                <input
-                  type="text"
-                  placeholder="Search documentation..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
-                  className={`text-sm outline-none flex-1 transition-all duration-300 ${searchClasses.input}`}
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className={`text-xs ${textClasses.secondary} ${textClasses.hover} transition-colors duration-200`}
-                  >
-                    ✕
-                  </button>
-                )}
+            {/* Search Button - Opens Modal */}
+            <button
+              onClick={() => setShowSearch(true)}
+              className={`flex items-center space-x-3 ${searchClasses} border rounded-lg px-4 py-2 transition-all duration-300 group min-w-[200px]`}
+            >
+              <Search className={`w-4 h-4 ${textClasses.secondary} group-hover:text-cyan-400 transition-colors duration-300`} />
+              <span className={`text-sm ${textClasses.secondary} group-hover:${textClasses.primary} transition-colors duration-300`}>
+                Search everything...
+              </span>
+              <div className="flex items-center space-x-1 ml-auto">
+                <kbd className={`px-1.5 py-0.5 text-xs ${settings.theme === 'light' ? 'bg-gray-200 text-gray-600' : 'bg-gray-800 text-gray-400'} rounded border`}>
+                  ⌘
+                </kbd>
+                <kbd className={`px-1.5 py-0.5 text-xs ${settings.theme === 'light' ? 'bg-gray-200 text-gray-600' : 'bg-gray-800 text-gray-400'} rounded border`}>
+                  K
+                </kbd>
               </div>
-              
-              {/* Search suggestions dropdown (when focused and has query) */}
-              {isSearchFocused && searchQuery && (
-                <div className={`absolute top-full left-0 right-0 mt-2 ${settings.theme === 'light' ? 'bg-white border-gray-200' : 'bg-gray-900 border-gray-700'} border rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto`}>
-                  <div className="p-2">
-                    <div className={`text-xs ${textClasses.muted} uppercase tracking-widest font-semibold mb-2 px-2`}>
-                      Search Results
-                    </div>
-                    <div className="space-y-1">
-                      <button className={`w-full text-left px-3 py-2 rounded-md ${textClasses.secondary} hover:${settings.theme === 'light' ? 'bg-gray-100' : 'bg-gray-800'} transition-colors duration-200 text-sm`}>
-                        <div className={`font-medium ${textClasses.primary}`}>Java Basics</div>
-                        <div className={`text-xs ${textClasses.muted}`}>Documentation → Core Concepts</div>
-                      </button>
-                      <button className={`w-full text-left px-3 py-2 rounded-md ${textClasses.secondary} hover:${settings.theme === 'light' ? 'bg-gray-100' : 'bg-gray-800'} transition-colors duration-200 text-sm`}>
-                        <div className={`font-medium ${textClasses.primary}`}>Object-Oriented Programming</div>
-                        <div className={`text-xs ${textClasses.muted}`}>Documentation → Advanced Topics</div>
-                      </button>
-                      <button className={`w-full text-left px-3 py-2 rounded-md ${textClasses.secondary} hover:${settings.theme === 'light' ? 'bg-gray-100' : 'bg-gray-800'} transition-colors duration-200 text-sm`}>
-                        <div className={`font-medium ${textClasses.primary}`}>HelloWorld Assignment</div>
-                        <div className={`text-xs ${textClasses.muted}`}>Assignments → Beginner</div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </form>
+            </button>
           </div>
         </div>
       </header>
@@ -244,6 +186,11 @@ const Header: React.FC = () => {
       <SettingsHover 
         isVisible={showSettings} 
         onClose={() => setShowSettings(false)} 
+      />
+
+      <SearchModal 
+        isOpen={showSearch} 
+        onClose={() => setShowSearch(false)} 
       />
     </>
   );
