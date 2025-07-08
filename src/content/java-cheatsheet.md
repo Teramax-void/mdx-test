@@ -1,259 +1,365 @@
 # Java Programming Cheatsheet
 
-## Table of Contents
-- [Basic Syntax](#basic-syntax)
-- [Data Types](#data-types)
-- [Variables](#variables)
-- [Operators](#operators)
-- [Control Structures](#control-structures)
-- [Methods](#methods)
-- [Classes and Objects](#classes-and-objects)
-- [Inheritance](#inheritance)
-- [Interfaces](#interfaces)
-- [Exception Handling](#exception-handling)
-- [Collections](#collections)
-- [String Manipulation](#string-manipulation)
-- [File I/O](#file-io)
-- [Common Patterns](#common-patterns)
-
-## Basic Syntax
+## Getting Started
 
 ### Hello World
 ```java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+public class Hello {
+  // main method
+  public static void main(String[] args)
+  {
+    // Output: Hello, world!
+    System.out.println("Hello, world!");
+  }
 }
 ```
 
-### Comments
-```java
-// Single line comment
-
-/*
- * Multi-line comment
- */
-
-/**
- * Javadoc comment
- * @param args command line arguments
- */
+Compiling and running:
+```bash
+$ javac Hello.java
+$ java Hello
+Hello, world!
 ```
 
-### Package Declaration
+### Variables
 ```java
-package com.example.myapp;
-
-import java.util.List;
-import java.util.ArrayList;
+int num = 5;
+float floatNum = 5.99f;
+char letter = 'D';
+boolean bool = true;
+String site = "quickref.me";
 ```
 
-## Data Types
-
-### Primitive Types
+### Primitive Data Types
 ```java
-// Integer types
-byte b = 127;           // 8-bit (-128 to 127)
-short s = 32767;        // 16-bit (-32,768 to 32,767)
-int i = 2147483647;     // 32-bit (-2^31 to 2^31-1)
-long l = 9223372036854775807L; // 64-bit (-2^63 to 2^63-1)
-
-// Floating point types
-float f = 3.14f;        // 32-bit IEEE 754
-double d = 3.14159;     // 64-bit IEEE 754
-
-// Other types
-boolean bool = true;    // true or false
-char c = 'A';          // 16-bit Unicode character
+byte    // 1 byte  | 0        | -128 to 127
+short   // 2 byte  | 0        | -2^15 to 2^15-1
+int     // 4 byte  | 0        | -2^31 to 2^31-1
+long    // 8 byte  | 0        | -2^63 to 2^63-1
+float   // 4 byte  | 0.0f     | N/A
+double  // 8 byte  | 0.0d     | N/A
+char    // 2 byte  | \u0000   | 0 to 65535
+boolean // N/A     | false    | true / false
 ```
 
-### Reference Types
+### Type Casting
 ```java
-String str = "Hello World";
-int[] array = {1, 2, 3, 4, 5};
-List<String> list = new ArrayList<>();
+// Widening
+// byte<short<int<long<float<double
+int i = 10;
+long l = i;               // 10
+
+// Narrowing
+double d = 10.02;
+long l = (long)d;         // 10
+
+String.valueOf(10);       // "10"
+Integer.parseInt("10");   // 10
+Double.parseDouble("10"); // 10.0
 ```
 
-## Variables
-
-### Declaration and Initialization
+### User Input
 ```java
-// Declaration
-int number;
-String name;
+Scanner in = new Scanner(System.in);
+String str = in.nextLine();
+System.out.println(str);
 
-// Initialization
-number = 42;
-name = "John";
-
-// Declaration with initialization
-int age = 25;
-final double PI = 3.14159; // Constant
+int num = in.nextInt();
+System.out.println(num);
 ```
 
-### Variable Scope
+### Swap Variables
 ```java
-public class ScopeExample {
-    private int instanceVar = 10; // Instance variable
-    private static int classVar = 20; // Class variable
-    
-    public void method() {
-        int localVar = 30; // Local variable
-        
-        if (true) {
-            int blockVar = 40; // Block variable
-        }
-        // blockVar not accessible here
-    }
+int a = 1;
+int b = 2;
+System.out.println(a + " " + b); // 1 2
+
+int temp = a;
+a = b;
+b = temp;
+System.out.println(a + " " + b); // 2 1
+```
+
+## Strings
+
+### String Basics
+```java
+String str1 = "value";
+String str2 = new String("value");
+String str3 = String.valueOf(123);
+```
+
+### String Concatenation
+```java
+String s = 3 + "str" + 3;     // 3str3
+String s = 3 + 3 + "str";     // 6str
+String s = "3" + 3 + "str";   // 33str
+String s = "3" + "3" + "23";  // 3323
+String s = "" + 3 + 3 + "23"; // 3323
+```
+
+### StringBuilder
+```java
+StringBuilder sb = new StringBuilder();
+sb.append("Hello");
+sb.append(" ");
+sb.append("World");
+
+String result = sb.toString(); // "Hello World"
+
+// More efficient for multiple concatenations
+StringBuilder builder = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    builder.append("Number: ").append(i).append("\n");
 }
+String longString = builder.toString();
 ```
 
-## Operators
-
-### Arithmetic Operators
+### String Comparison
 ```java
-int a = 10, b = 3;
+String s1 = new String("cheatsheets.zip");
+String s2 = new String("cheatsheets.zip");
 
-int sum = a + b;        // Addition: 13
-int diff = a - b;       // Subtraction: 7
-int product = a * b;    // Multiplication: 30
-int quotient = a / b;   // Division: 3
-int remainder = a % b;  // Modulus: 1
+s1 == s2          // false
+s1.equals(s2)     // true
 
-// Increment/Decrement
-a++;    // Post-increment
-++a;    // Pre-increment
-b--;    // Post-decrement
---b;    // Pre-decrement
+"AB".equalsIgnoreCase("ab")  // true
 ```
 
-### Comparison Operators
+### String Manipulation
 ```java
-int x = 5, y = 10;
+String str = "Abcd";
 
-boolean equal = (x == y);       // false
-boolean notEqual = (x != y);    // true
-boolean greater = (x > y);      // false
-boolean less = (x < y);         // true
-boolean greaterEqual = (x >= y); // false
-boolean lessEqual = (x <= y);   // true
+str.toUpperCase();     // ABCD
+str.toLowerCase();     // abcd
+str.concat("#");       // Abcd#
+str.replace("b", "-"); // A-cd
+
+"  abc ".trim();       // abc
+"ab".toCharArray();    // {'a', 'b'}
 ```
 
-### Logical Operators
+### String Information
 ```java
-boolean a = true, b = false;
+String str = "abcd";
 
-boolean and = a && b;   // Logical AND: false
-boolean or = a || b;    // Logical OR: true
-boolean not = !a;       // Logical NOT: false
+str.charAt(2);       // c
+str.indexOf("a")     // 0
+str.indexOf("z")     // -1
+str.length();        // 4
+str.toString();      // abcd
+str.substring(2);    // cd
+str.substring(2,3);  // c
+str.contains("c");   // true
+str.endsWith("d");   // true
+str.startsWith("a"); // true
+str.isEmpty();       // false
 ```
 
-### Assignment Operators
+### String Immutability
 ```java
-int x = 10;
+String str = "hello";
+str.concat("world");
 
-x += 5;  // x = x + 5;  (15)
-x -= 3;  // x = x - 3;  (12)
-x *= 2;  // x = x * 2;  (24)
-x /= 4;  // x = x / 4;  (6)
-x %= 5;  // x = x % 5;  (1)
+// Outputs: hello
+System.out.println(str);
+
+// Correct way:
+String str = "hello";
+String concat = str.concat("world");
+
+// Outputs: helloworld
+System.out.println(concat);
+```
+
+## Arrays
+
+### Array Declaration
+```java
+int[] a1;
+int[] a2 = {1, 2, 3};
+int[] a3 = new int[]{1, 2, 3};
+
+int[] a4 = new int[3];
+a4[0] = 1;
+a4[1] = 2;
+a4[2] = 3;
+```
+
+### Array Operations
+```java
+int[] a = {1, 2, 3};
+System.out.println(a[0]); // 1
+
+a[0] = 9;
+System.out.println(a[0]); // 9
+
+System.out.println(a.length); // 3
+```
+
+### Array Loops
+```java
+// Loop (Read & Modify)
+int[] arr = {1, 2, 3};
+for (int i=0; i < arr.length; i++) {
+    arr[i] = arr[i] * 2;
+    System.out.print(arr[i] + " ");
+}
+// Outputs: 2 4 6
+
+// Enhanced for loop (Read only)
+String[] arr = {"a", "b", "c"};
+for (String a: arr) {
+    System.out.print(a + " ");
+}
+// Outputs: a b c
+```
+
+### Multidimensional Arrays
+```java
+int[][] matrix = { {1, 2, 3}, {4, 5} };
+
+int x = matrix[1][0];  // 4
+// [[1, 2, 3], [4, 5]]
+Arrays.deepToString(matrix);
+
+for (int i = 0; i < matrix.length; ++i) {
+  for(int j = 0; j < matrix[i].length; ++j) {
+    System.out.println(matrix[i][j]);
+  }
+}
+// Outputs: 1 2 3 4 5
+```
+
+### Array Sorting
+```java
+char[] chars = {'b', 'a', 'c'};
+Arrays.sort(chars);
+
+// [a, b, c]
+Arrays.toString(chars);
 ```
 
 ## Control Structures
 
 ### If-Else Statements
 ```java
-int score = 85;
-
-if (score >= 90) {
-    System.out.println("A grade");
-} else if (score >= 80) {
-    System.out.println("B grade");
-} else if (score >= 70) {
-    System.out.println("C grade");
+int k = 15;
+if (k > 20) {
+  System.out.println(1);
+} else if (k > 10) {
+  System.out.println(2);
 } else {
-    System.out.println("F grade");
+  System.out.println(3);
 }
-
-// Ternary operator
-String result = (score >= 60) ? "Pass" : "Fail";
 ```
 
 ### Switch Statements
 ```java
-int day = 3;
-String dayName;
-
-switch (day) {
-    case 1:
-        dayName = "Monday";
-        break;
-    case 2:
-        dayName = "Tuesday";
-        break;
-    case 3:
-        dayName = "Wednesday";
-        break;
-    default:
-        dayName = "Invalid day";
-        break;
+int month = 3;
+String str;
+switch (month) {
+  case 1:
+    str = "January";
+    break;
+  case 2:
+    str = "February";
+    break;
+  case 3:
+    str = "March";
+    break;
+  default:
+    str = "Some other month";
+    break;
 }
 
-// Enhanced switch (Java 14+)
-String dayName2 = switch (day) {
-    case 1 -> "Monday";
-    case 2 -> "Tuesday";
-    case 3 -> "Wednesday";
-    default -> "Invalid day";
-};
+// Outputs: Result March
+System.out.println("Result " + str);
 ```
 
-### Loops
-
-#### For Loop
+### Ternary Operator
 ```java
-// Traditional for loop
+int a = 10;
+int b = 20;
+int max = (a > b) ? a : b;
+
+// Outputs: 20
+System.out.println(max);
+```
+
+## Loops
+
+### For Loop
+```java
 for (int i = 0; i < 10; i++) {
-    System.out.println(i);
+  System.out.print(i);
 }
+// Outputs: 0123456789
 
-// Enhanced for loop (for-each)
-int[] numbers = {1, 2, 3, 4, 5};
-for (int num : numbers) {
-    System.out.println(num);
+// Multiple variables
+for (int i = 0,j = 0; i < 3; i++,j--) {
+  System.out.print(j + "|" + i + " ");
 }
+// Outputs: 0|0 -1|1 -2|2
 ```
 
-#### While Loop
+### Enhanced For Loop
 ```java
-int i = 0;
-while (i < 10) {
-    System.out.println(i);
-    i++;
+int[] numbers = {1,2,3,4,5};
+
+for (int number: numbers) {
+  System.out.print(number);
 }
+// Outputs: 12345
+
+String word = "CheatSheets";
+for (char c: word.toCharArray()) {
+  System.out.print(c + "-");
+}
+// Outputs: C-h-e-a-t-S-h-e-e-t-s-
 ```
 
-#### Do-While Loop
+### While Loop
 ```java
-int i = 0;
+int count = 0;
+
+while (count < 5) {
+  System.out.print(count);
+  count++;
+}
+// Outputs: 01234
+```
+
+### Do-While Loop
+```java
+int count = 0;
+
 do {
-    System.out.println(i);
-    i++;
-} while (i < 10);
+  System.out.print(count);
+  count++;
+} while (count < 5);
+// Outputs: 01234
 ```
 
 ### Break and Continue
 ```java
-for (int i = 0; i < 10; i++) {
-    if (i == 3) {
-        continue; // Skip iteration when i = 3
-    }
-    if (i == 7) {
-        break; // Exit loop when i = 7
-    }
-    System.out.println(i);
+// Continue Statement
+for (int i = 0; i < 5; i++) {
+  if (i == 3) {
+    continue;
+  }
+  System.out.print(i);
 }
+// Outputs: 0124
+
+// Break Statement
+for (int i = 0; i < 5; i++) {
+  System.out.print(i);
+  if (i == 3) {
+    break;
+  }
+}
+// Outputs: 0123
 ```
 
 ## Methods
@@ -588,7 +694,7 @@ public class FileExample {
 }
 ```
 
-## Collections
+## Collections Framework
 
 ### ArrayList
 ```java
@@ -652,73 +758,233 @@ for (String item : set) {
 }
 ```
 
-## String Manipulation
-
-### String Operations
+### ArrayDeque
 ```java
-String str = "Hello World";
+Deque<String> a = new ArrayDeque<>();
 
-// Length and character access
-int length = str.length();
-char firstChar = str.charAt(0);
+// Using add()
+a.add("Dog");
 
-// Substring
-String sub = str.substring(0, 5); // "Hello"
-String sub2 = str.substring(6);   // "World"
+// Using addFirst()
+a.addFirst("Cat");
 
-// Case conversion
-String upper = str.toUpperCase(); // "HELLO WORLD"
-String lower = str.toLowerCase(); // "hello world"
+// Using addLast()
+a.addLast("Horse");
 
-// Trimming
-String trimmed = "  Hello  ".trim(); // "Hello"
+// [Cat, Dog, Horse]
+System.out.println(a);
 
-// Replacement
-String replaced = str.replace("World", "Java"); // "Hello Java"
+// Access element
+System.out.println(a.peek());
 
-// Splitting
-String[] words = str.split(" "); // ["Hello", "World"]
-
-// Checking
-boolean startsWith = str.startsWith("Hello"); // true
-boolean endsWith = str.endsWith("World");     // true
-boolean contains = str.contains("llo");       // true
+// Remove element
+System.out.println(a.pop());
 ```
 
-### StringBuilder
+## Operators
+
+### Arithmetic Operators
 ```java
-StringBuilder sb = new StringBuilder();
-sb.append("Hello");
-sb.append(" ");
-sb.append("World");
+int a = 10, b = 3;
 
-String result = sb.toString(); // "Hello World"
+int sum = a + b;        // Addition: 13
+int diff = a - b;       // Subtraction: 7
+int product = a * b;    // Multiplication: 30
+int quotient = a / b;   // Division: 3
+int remainder = a % b;  // Modulus: 1
 
-// More efficient for multiple concatenations
-StringBuilder builder = new StringBuilder();
-for (int i = 0; i < 1000; i++) {
-    builder.append("Number: ").append(i).append("\n");
-}
-String longString = builder.toString();
+// Increment/Decrement
+a++;    // Post-increment
+++a;    // Pre-increment
+b--;    // Post-decrement
+--b;    // Pre-decrement
 ```
 
-### String Formatting
+### Comparison Operators
 ```java
-// String.format()
-String formatted = String.format("Name: %s, Age: %d, Score: %.2f", 
-                                 "Alice", 25, 95.5);
+int x = 5, y = 10;
 
-// printf-style
-System.out.printf("Name: %s, Age: %d%n", "Bob", 30);
+boolean equal = (x == y);       // false
+boolean notEqual = (x != y);    // true
+boolean greater = (x > y);      // false
+boolean less = (x < y);         // true
+boolean greaterEqual = (x >= y); // false
+boolean lessEqual = (x <= y);   // true
+```
 
-// Text blocks (Java 15+)
-String json = """
-    {
-        "name": "Alice",
-        "age": 25,
-        "city": "New York"
+### Logical Operators
+```java
+boolean a = true, b = false;
+
+boolean and = a && b;   // Logical AND: false
+boolean or = a || b;    // Logical OR: true
+boolean not = !a;       // Logical NOT: false
+```
+
+### Assignment Operators
+```java
+int x = 10;
+
+x += 5;  // x = x + 5;  (15)
+x -= 3;  // x = x - 3;  (12)
+x *= 2;  // x = x * 2;  (24)
+x /= 4;  // x = x / 4;  (6)
+x %= 5;  // x = x % 5;  (1)
+```
+
+## Access Modifiers
+
+### Visibility Table
+```java
+// Modifier    | Class | Package | Subclass | World
+// public      |   Y   |    Y    |    Y     |   Y
+// protected   |   Y   |    Y    |    Y     |   N
+// no modifier |   Y   |    Y    |    N     |   N
+// private     |   Y   |    N    |    N     |   N
+```
+
+### Example Usage
+```java
+public class AccessExample {
+    public String publicVar = "Everyone can see this";
+    protected String protectedVar = "Subclasses and package can see this";
+    String packageVar = "Only package can see this";
+    private String privateVar = "Only this class can see this";
+    
+    public void publicMethod() {
+        // Accessible from anywhere
     }
-    """;
+    
+    protected void protectedMethod() {
+        // Accessible from subclasses and same package
+    }
+    
+    void packageMethod() {
+        // Accessible from same package only
+    }
+    
+    private void privateMethod() {
+        // Accessible from this class only
+    }
+}
+```
+
+## Math Methods
+
+### Common Math Operations
+```java
+// Basic operations
+Math.max(a, b);         // Maximum of a and b
+Math.min(a, b);         // Minimum of a and b
+Math.abs(a);            // Absolute value of a
+Math.sqrt(a);           // Square root of a
+Math.pow(a, b);         // a raised to power b
+Math.round(a);          // Closest integer to a
+
+// Trigonometric functions
+Math.sin(angle);        // Sine of angle (in radians)
+Math.cos(angle);        // Cosine of angle
+Math.tan(angle);        // Tangent of angle
+Math.asin(value);       // Inverse sine
+Math.acos(value);       // Inverse cosine
+Math.atan(value);       // Inverse tangent
+
+// Logarithmic functions
+Math.log(a);            // Natural logarithm of a
+Math.log10(a);          // Base-10 logarithm of a
+
+// Angle conversion
+Math.toDegrees(radians); // Convert radians to degrees
+Math.toRadians(degrees); // Convert degrees to radians
+
+// Constants
+Math.PI;                // π (pi)
+Math.E;                 // e (Euler's number)
+```
+
+## Regular Expressions
+
+### Basic Pattern Matching
+```java
+String text = "I am learning Java";
+
+// Removing all whitespace
+text.replaceAll("\\s+", "");
+
+// Splitting a string
+String[] parts = text.split("\\s+");  // Split by whitespace
+String[] parts2 = text.split("\\|");  // Split by pipe character
+
+// Using Pattern.quote for literal strings
+String[] parts3 = text.split(Pattern.quote("|"));
+```
+
+### Pattern Validation
+```java
+import java.util.regex.Pattern;
+
+// Email validation
+String email = "user@example.com";
+boolean isValidEmail = Pattern.matches("^[A-Za-z0-9+_.-]+@(.+)$", email);
+
+// Phone number validation
+String phone = "123-456-7890";
+boolean isValidPhone = Pattern.matches("\\d{3}-\\d{3}-\\d{4}", phone);
+
+// Check if string contains only digits
+String number = "12345";
+boolean isNumeric = Pattern.matches("\\d+", number);
+```
+
+## Comments and Documentation
+
+### Comment Types
+```java
+// Single line comment
+
+/*
+ * Multi-line comment
+ * Can span multiple lines
+ */
+
+/**
+ * Javadoc comment for documentation
+ * @param args command line arguments
+ * @return description of return value
+ * @throws Exception description of exception
+ * @author Your Name
+ * @version 1.0
+ * @since 1.0
+ */
+public static void main(String[] args) throws Exception {
+    // Method implementation
+}
+```
+
+## Keywords
+
+### Reserved Keywords
+```java
+// Control flow
+if, else, switch, case, default, for, while, do, break, continue, return
+
+// Class and method modifiers
+public, private, protected, static, final, abstract, synchronized, native, strictfp, transient, volatile
+
+// Class-related
+class, interface, extends, implements, super, this, new, instanceof
+
+// Data types
+boolean, byte, char, short, int, long, float, double, void
+
+// Exception handling
+try, catch, finally, throw, throws
+
+// Package and import
+package, import
+
+// Other
+assert, enum, const, goto (reserved but not used)
 ```
 
 ## File I/O
@@ -729,7 +995,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.List;
 
-// Reading entire file
+// Reading entire file as string
 try {
     String content = Files.readString(Paths.get("file.txt"));
     System.out.println(content);
@@ -737,7 +1003,7 @@ try {
     e.printStackTrace();
 }
 
-// Reading lines
+// Reading all lines
 try {
     List<String> lines = Files.readAllLines(Paths.get("file.txt"));
     for (String line : lines) {
@@ -762,6 +1028,7 @@ try (BufferedReader reader = Files.newBufferedReader(Paths.get("file.txt"))) {
 ```java
 import java.io.*;
 import java.nio.file.*;
+import java.util.Arrays;
 
 // Writing string to file
 try {
