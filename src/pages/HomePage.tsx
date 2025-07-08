@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Download, Play, Code, Users, Clock, Target, Zap, ArrowRight, CheckCircle, Star, Award, TrendingUp } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import CourseSections from '../components/CourseSections';
 
 const HomePage: React.FC = () => {
   const { settings } = useSettings();
@@ -82,6 +83,9 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+      
+      {/* Course Sections */}
+      <CourseSections />
       
       {/* Course Features */}
       <section className="py-24 px-8">
