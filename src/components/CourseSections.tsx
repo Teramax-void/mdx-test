@@ -172,7 +172,7 @@ const CourseSections: React.FC = () => {
   };
 
   return (
-    <section className={`py-24 px-8 ${themeClasses.background}`}>
+    <section className="py-24 px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">

@@ -87,61 +87,6 @@ const HomePage: React.FC = () => {
       {/* Course Sections */}
       <CourseSections />
       
-      {/* Course Features */}
-      <section className="py-24 px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className={`text-4xl md:text-5xl font-bold ${themeClasses.text.primary} mb-6`}>
-              Why Choose <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">PRO192</span>?
-            </h2>
-            <p className={`text-xl ${themeClasses.text.secondary} max-w-3xl mx-auto`}>
-              Master object-oriented programming with hands-on projects, interactive coding environments, and comprehensive learning materials.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className={`${themeClasses.card} rounded-xl p-8 hover:border-cyan-500/30 transition-all duration-200 group relative overflow-hidden`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
-                  <Play className="w-8 h-8 text-cyan-400" />
-                </div>
-                <h3 className={`text-xl font-bold ${themeClasses.text.primary} mb-4`}>Interactive Learning</h3>
-                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
-                  Code directly in your browser with our integrated development environment. No setup required.
-                </p>
-              </div>
-            </div>
-            
-            <div className={`${themeClasses.card} rounded-xl p-8 hover:border-purple-500/30 transition-all duration-200 group relative overflow-hidden`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
-                  <Zap className="w-8 h-8 text-purple-400" />
-                </div>
-                <h3 className={`text-xl font-bold ${themeClasses.text.primary} mb-4`}>Real-time Feedback</h3>
-                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
-                  Get instant feedback on your code with automated testing and comprehensive error reporting.
-                </p>
-              </div>
-            </div>
-            
-            <div className={`${themeClasses.card} rounded-xl p-8 hover:border-green-500/30 transition-all duration-200 group relative overflow-hidden`}>
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-200">
-                  <TrendingUp className="w-8 h-8 text-green-400" />
-                </div>
-                <h3 className={`text-xl font-bold ${themeClasses.text.primary} mb-4`}>Progress Tracking</h3>
-                <p className={`${themeClasses.text.secondary} leading-relaxed`}>
-                  Monitor your learning journey with detailed analytics and achievement milestones.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       {/* Quick Start */}
       <section className={`py-24 px-8 ${themeClasses.section}`}>
         <div className="max-w-4xl mx-auto text-center">
