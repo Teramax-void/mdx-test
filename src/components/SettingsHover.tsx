@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Palette, Type, Eye, Globe, Monitor, Moon, Sun, Zap, Volume2, Bell, Shield } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Palette, Type, Eye, Globe, Monitor, Moon, Sun, Zap, Volume2, Bell, Shield, User, Sliders, Keyboard, Languages, Accessibility } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
 
 interface SettingsHoverProps {
@@ -10,30 +10,140 @@ interface SettingsHoverProps {
 const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => {
   const { settings, updateSettings } = useSettings();
   const [activeSection, setActiveSection] = useState('appearance');
+  const [previewSettings, setPreviewSettings] = useState(settings);
+
+  // Update preview when settings change
+  useEffect(() => {
+    setPreviewSettings(settings);
+  }, [settings]);
 
   if (!isVisible) return null;
 
   const handleThemeChange = (theme: 'light' | 'dark') => {
-    updateSettings({ theme });
+    const newSettings = { ...previewSettings, theme };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
   };
 
   const handleVariantChange = (variant: 'modern-dark' | 'blue-professional' | 'deep-purple') => {
-    updateSettings({ themeVariant: variant });
+    const newSettings = { ...previewSettings, themeVariant: variant };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
   };
 
   const handleBackgroundAnimationToggle = () => {
-    updateSettings({ backgroundAnimation: !settings.backgroundAnimation });
+    const newSettings = { ...previewSettings, backgroundAnimation: !previewSettings.backgroundAnimation };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleFontSizeChange = (fontSize: number) => {
+    const newSettings = { ...previewSettings, fontSize };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleFontFamilyChange = (fontFamily: 'sans-serif' | 'monospace' | 'serif') => {
+    const newSettings = { ...previewSettings, fontFamily };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleAccessibilityToggle = (feature: 'highContrast' | 'keyboardNavigation') => {
+    const newSettings = { ...previewSettings, [feature]: !previewSettings[feature] };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleLanguageChange = (language: 'en' | 'es' | 'fr' | 'de') => {
+    const newSettings = { ...previewSettings, language };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleNotificationToggle = (type: 'assignmentDue' | 'systemUpdates' | 'messages') => {
+    const newSettings = {
+      ...previewSettings,
+      notifications: {
+        ...previewSettings.notifications,
+        [type]: !previewSettings.notifications[type]
+      }
+    };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleNotificationStyleChange = (style: 'popup' | 'banner') => {
+    const newSettings = {
+      ...previewSettings,
+      notifications: { ...previewSettings.notifications, style }
+    };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleLearningPreferenceChange = (key: string, value: any) => {
+    const newSettings = {
+      ...previewSettings,
+      learningPreferences: { ...previewSettings.learningPreferences, [key]: value }
+    };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
+  };
+
+  const handleColorChange = (colorType: 'primary' | 'accent', color: string) => {
+    const newSettings = {
+      ...previewSettings,
+      customColors: { ...previewSettings.customColors, [colorType]: color }
+    };
+    setPreviewSettings(newSettings);
+    updateSettings(newSettings);
   };
 
   const handleApplyChanges = () => {
-    // Here you could save settings to localStorage or send to a server
-    localStorage.setItem('app-settings', JSON.stringify(settings));
+    // Save to localStorage
+    localStorage.setItem('pro192-settings', JSON.stringify(previewSettings));
     onClose();
+  };
+
+  const handleCancel = () => {
+    setPreviewSettings(settings);
+    onClose();
+  };
+
+  const resetToDefaults = () => {
+    const defaultSettings = {
+      theme: 'dark' as const,
+      themeVariant: 'modern-dark' as const,
+      backgroundAnimation: true,
+      fontSize: 14,
+      fontFamily: 'monospace' as const,
+      highContrast: false,
+      keyboardNavigation: true,
+      language: 'en' as const,
+      notifications: {
+        assignmentDue: true,
+        systemUpdates: false,
+        messages: false,
+        style: 'popup' as const
+      },
+      learningPreferences: {
+        skillLevel: 'beginner' as const,
+        contentFocus: ['fundamentals', 'classes', 'methods'],
+        interactiveMode: true
+      },
+      customColors: {
+        primary: '#06b6d4',
+        accent: '#8b5cf6'
+      }
+    };
+    setPreviewSettings(defaultSettings);
+    updateSettings(defaultSettings);
   };
 
   // Dynamic theme classes based on current settings
   const getThemeClasses = () => {
-    if (settings.theme === 'light') {
+    if (previewSettings.theme === 'light') {
       return {
         modal: 'bg-white border-gray-200',
         sidebar: 'bg-gray-50 border-gray-200',
@@ -47,7 +157,8 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
           inactive: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
         },
         card: 'bg-gray-50 border-gray-200',
-        gradient: 'from-cyan-500/10 to-purple-500/10'
+        gradient: 'from-cyan-500/10 to-purple-500/10',
+        input: 'bg-white border-gray-300 text-gray-900'
       };
     }
     return {
@@ -63,15 +174,33 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
         inactive: 'text-gray-400 hover:text-white hover:bg-gray-900/50'
       },
       card: 'bg-gray-900/50 border-gray-700',
-      gradient: 'from-cyan-500/5 to-purple-500/5'
+      gradient: 'from-cyan-500/5 to-purple-500/5',
+      input: 'bg-gray-900 border-gray-700 text-white'
     };
   };
 
   const themeClasses = getThemeClasses();
 
+  const languages = {
+    en: 'English',
+    es: 'Español',
+    fr: 'Français',
+    de: 'Deutsch'
+  };
+
+  const contentFocusOptions = [
+    'fundamentals',
+    'classes',
+    'methods',
+    'inheritance',
+    'polymorphism',
+    'data-structures',
+    'algorithms'
+  ];
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] flex items-center justify-center p-4">
-      <div className={`${themeClasses.modal} rounded-xl w-full max-h-[90vh] overflow-hidden relative`} style={{ width: '1000px', height: '700px' }}>
+      <div className={`${themeClasses.modal} rounded-xl w-full max-h-[90vh] overflow-hidden relative`} style={{ width: '1200px', height: '800px' }}>
         {/* Animated background gradient */}
         <div className={`absolute inset-0 bg-gradient-to-br ${themeClasses.gradient} opacity-50`}></div>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400"></div>
@@ -87,7 +216,7 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
                 <h2 className={`text-2xl font-bold ${themeClasses.text.primary} tracking-wide`}>Settings</h2>
               </div>
               <button
-                onClick={onClose}
+                onClick={handleCancel}
                 className={`p-2 ${themeClasses.text.secondary} hover:${themeClasses.text.primary} hover:bg-gray-800/50 rounded-lg transition-all duration-300`}
               >
                 <X className="w-5 h-5" />
@@ -95,82 +224,43 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
             </div>
             
             <div className="space-y-2 flex-1">
-              <button 
-                onClick={() => setActiveSection('appearance')}
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg transition-all duration-300 relative ${
-                  activeSection === 'appearance'
-                    ? `${themeClasses.button.active} shadow-lg shadow-cyan-500/10`
-                    : themeClasses.button.inactive
-                }`}
+              {[
+                { id: 'appearance', title: 'Appearance', icon: <Palette className="w-4 h-4" /> },
+                { id: 'typography', title: 'Typography', icon: <Type className="w-4 h-4" /> },
+                { id: 'accessibility', title: 'Accessibility', icon: <Accessibility className="w-4 h-4" /> },
+                { id: 'language', title: 'Language', icon: <Languages className="w-4 h-4" /> },
+                { id: 'notifications', title: 'Notifications', icon: <Bell className="w-4 h-4" /> },
+                { id: 'learning', title: 'Learning Preferences', icon: <User className="w-4 h-4" /> }
+              ].map((section) => (
+                <button 
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg transition-all duration-300 relative ${
+                    activeSection === section.id
+                      ? `${themeClasses.button.active} shadow-lg shadow-cyan-500/10`
+                      : themeClasses.button.inactive
+                  }`}
+                >
+                  <div className={`p-1.5 rounded-md transition-all duration-300 ${
+                    activeSection === section.id ? 'bg-cyan-500/20 text-cyan-400' : 'hover:bg-gray-800/50'
+                  }`}>
+                    {section.icon}
+                  </div>
+                  <span className="text-sm font-medium">{section.title}</span>
+                  {activeSection === section.id && (
+                    <div className="absolute right-3 w-1 h-6 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full"></div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Reset Button */}
+            <div className="pt-4 border-t border-gray-800">
+              <button
+                onClick={resetToDefaults}
+                className={`w-full px-4 py-2 ${themeClasses.card} hover:bg-gray-800/50 ${themeClasses.text.secondary} rounded-lg transition-all duration-300 text-sm border`}
               >
-                <div className={`p-1.5 rounded-md transition-all duration-300 ${
-                  activeSection === 'appearance' ? 'bg-cyan-500/20 text-cyan-400' : 'hover:bg-gray-800/50'
-                }`}>
-                  <Palette className="w-4 h-4" />
-                </div>
-                <span className="text-sm font-medium">Appearance</span>
-                {activeSection === 'appearance' && (
-                  <div className="absolute right-3 w-1 h-6 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full"></div>
-                )}
-              </button>
-              
-              <button 
-                onClick={() => setActiveSection('typography')}
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden ${
-                  activeSection === 'typography'
-                    ? `${themeClasses.button.active} shadow-lg shadow-cyan-500/10`
-                    : themeClasses.button.inactive
-                }`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${themeClasses.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                <div className="p-1.5 rounded-md group-hover:bg-gray-800/50 transition-all duration-300 relative z-10">
-                  <Type className="w-4 h-4" />
-                </div>
-                <span className="text-sm font-medium relative z-10">Typography</span>
-              </button>
-              
-              <button 
-                onClick={() => setActiveSection('accessibility')}
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg ${themeClasses.button.inactive} transition-all duration-300 group relative overflow-hidden`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${themeClasses.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                <div className="p-1.5 rounded-md group-hover:bg-gray-800/50 transition-all duration-300 relative z-10">
-                  <Eye className="w-4 h-4" />
-                </div>
-                <span className="text-sm font-medium relative z-10">Accessibility</span>
-              </button>
-              
-              <button 
-                onClick={() => setActiveSection('language')}
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg ${themeClasses.button.inactive} transition-all duration-300 group relative overflow-hidden`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${themeClasses.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                <div className="p-1.5 rounded-md group-hover:bg-gray-800/50 transition-all duration-300 relative z-10">
-                  <Globe className="w-4 h-4" />
-                </div>
-                <span className="text-sm font-medium relative z-10">Language</span>
-              </button>
-              
-              <button 
-                onClick={() => setActiveSection('notifications')}
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg ${themeClasses.button.inactive} transition-all duration-300 group relative overflow-hidden`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${themeClasses.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                <div className="p-1.5 rounded-md group-hover:bg-gray-800/50 transition-all duration-300 relative z-10">
-                  <Bell className="w-4 h-4" />
-                </div>
-                <span className="text-sm font-medium relative z-10">Notifications</span>
-              </button>
-              
-              <button 
-                onClick={() => setActiveSection('privacy')}
-                className={`flex items-center space-x-3 w-full px-4 py-3 rounded-lg ${themeClasses.button.inactive} transition-all duration-300 group relative overflow-hidden`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-r ${themeClasses.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                <div className="p-1.5 rounded-md group-hover:bg-gray-800/50 transition-all duration-300 relative z-10">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <span className="text-sm font-medium relative z-10">Privacy</span>
+                Reset to Defaults
               </button>
             </div>
           </div>
@@ -187,15 +277,15 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
                     <button
                       onClick={() => handleThemeChange('light')}
                       className={`flex items-center space-x-3 p-4 rounded-lg border transition-all duration-300 ${
-                        settings.theme === 'light'
+                        previewSettings.theme === 'light'
                           ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-500/30 text-gray-900'
                           : `${themeClasses.card} ${themeClasses.text.secondary} hover:border-gray-600/50 hover:${themeClasses.text.primary}`
                       }`}
                     >
                       <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        settings.theme === 'light' ? 'border-cyan-400' : 'border-gray-600'
+                        previewSettings.theme === 'light' ? 'border-cyan-400' : 'border-gray-600'
                       }`}>
-                        {settings.theme === 'light' && <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
+                        {previewSettings.theme === 'light' && <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
                       </div>
                       <Sun className="w-5 h-5" />
                       <span className="font-medium">Light</span>
@@ -204,87 +294,68 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
                     <button
                       onClick={() => handleThemeChange('dark')}
                       className={`flex items-center space-x-3 p-4 rounded-lg border transition-all duration-300 ${
-                        settings.theme === 'dark'
+                        previewSettings.theme === 'dark'
                           ? `${themeClasses.button.active}`
                           : `${themeClasses.card} ${themeClasses.text.secondary} hover:border-gray-600/50 hover:${themeClasses.text.primary}`
                       }`}
                     >
                       <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        settings.theme === 'dark' ? 'border-cyan-400' : 'border-gray-600'
+                        previewSettings.theme === 'dark' ? 'border-cyan-400' : 'border-gray-600'
                       }`}>
-                        {settings.theme === 'dark' && <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
+                        {previewSettings.theme === 'dark' && <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
                       </div>
                       <Moon className="w-5 h-5" />
                       <span className="font-medium">Dark</span>
                     </button>
                   </div>
                 </div>
-                
-                {/* Dark Theme Variants */}
-                {settings.theme === 'dark' && (
-                  <div className="mb-8">
-                    <h3 className={`text-xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Dark Theme Variants</h3>
+
+                {/* Custom Colors */}
+                <div className="mb-8">
+                  <h3 className={`text-xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Custom Colors</h3>
+                  
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className={`block text-sm font-medium ${themeClasses.text.secondary} mb-2`}>
+                        Primary Color
+                      </label>
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="color"
+                          value={previewSettings.customColors.primary}
+                          onChange={(e) => handleColorChange('primary', e.target.value)}
+                          className="w-12 h-12 rounded-lg border border-gray-600 cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={previewSettings.customColors.primary}
+                          onChange={(e) => handleColorChange('primary', e.target.value)}
+                          className={`flex-1 px-3 py-2 ${themeClasses.input} rounded-lg border text-sm font-mono`}
+                        />
+                      </div>
+                    </div>
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                      <button
-                        onClick={() => handleVariantChange('modern-dark')}
-                        className={`p-6 rounded-lg border transition-all duration-300 text-left ${
-                          settings.themeVariant === 'modern-dark'
-                            ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-500/30'
-                            : `${themeClasses.card} hover:border-gray-600/50`
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className={`text-lg font-bold ${themeClasses.text.primary}`}>Modern Dark</h4>
-                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            settings.themeVariant === 'modern-dark' ? 'border-cyan-400' : 'border-gray-600'
-                          }`}>
-                            {settings.themeVariant === 'modern-dark' && <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>}
-                          </div>
-                        </div>
-                        <p className={`${themeClasses.text.secondary} text-sm`}>Clean and modern dark theme</p>
-                      </button>
-                      
-                      <button
-                        onClick={() => handleVariantChange('blue-professional')}
-                        className={`p-6 rounded-lg border transition-all duration-300 text-left ${
-                          settings.themeVariant === 'blue-professional'
-                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-500/30'
-                            : `${themeClasses.card} hover:border-gray-600/50`
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className={`text-lg font-bold ${themeClasses.text.primary}`}>Blue Professional</h4>
-                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            settings.themeVariant === 'blue-professional' ? 'border-blue-400' : 'border-gray-600'
-                          }`}>
-                            {settings.themeVariant === 'blue-professional' && <div className="w-2 h-2 bg-blue-400 rounded-full"></div>}
-                          </div>
-                        </div>
-                        <p className={`${themeClasses.text.secondary} text-sm`}>Professional blue accent</p>
-                      </button>
-                      
-                      <button
-                        onClick={() => handleVariantChange('deep-purple')}
-                        className={`p-6 rounded-lg border transition-all duration-300 text-left lg:col-span-1 ${
-                          settings.themeVariant === 'deep-purple'
-                            ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30'
-                            : `${themeClasses.card} hover:border-gray-600/50`
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className={`text-lg font-bold ${themeClasses.text.primary}`}>Deep Purple</h4>
-                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                            settings.themeVariant === 'deep-purple' ? 'border-purple-400' : 'border-gray-600'
-                          }`}>
-                            {settings.themeVariant === 'deep-purple' && <div className="w-2 h-2 bg-purple-400 rounded-full"></div>}
-                          </div>
-                        </div>
-                        <p className={`${themeClasses.text.secondary} text-sm`}>Rich purple tones</p>
-                      </button>
+                    <div>
+                      <label className={`block text-sm font-medium ${themeClasses.text.secondary} mb-2`}>
+                        Accent Color
+                      </label>
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="color"
+                          value={previewSettings.customColors.accent}
+                          onChange={(e) => handleColorChange('accent', e.target.value)}
+                          className="w-12 h-12 rounded-lg border border-gray-600 cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={previewSettings.customColors.accent}
+                          onChange={(e) => handleColorChange('accent', e.target.value)}
+                          className={`flex-1 px-3 py-2 ${themeClasses.input} rounded-lg border text-sm font-mono`}
+                        />
+                      </div>
                     </div>
                   </div>
-                )}
+                </div>
                 
                 {/* Background Animation */}
                 <div className="mb-8">
@@ -302,12 +373,12 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
                     <button
                       onClick={handleBackgroundAnimationToggle}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-                        settings.backgroundAnimation ? 'bg-gradient-to-r from-cyan-500 to-purple-500' : 'bg-gray-600'
+                        previewSettings.backgroundAnimation ? 'bg-gradient-to-r from-cyan-500 to-purple-500' : 'bg-gray-600'
                       }`}
                     >
                       <span
                         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                          settings.backgroundAnimation ? 'translate-x-6' : 'translate-x-1'
+                          previewSettings.backgroundAnimation ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
                     </button>
@@ -317,44 +388,292 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
             )}
 
             {activeSection === 'typography' && (
-              <div>
+              <div className="space-y-8">
                 <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Typography</h3>
-                <p className={themeClasses.text.secondary}>Typography settings will be available in a future update.</p>
+                
+                {/* Font Size */}
+                <div>
+                  <label className={`block text-lg font-medium ${themeClasses.text.primary} mb-4`}>
+                    Font Size: {previewSettings.fontSize}px
+                  </label>
+                  <input
+                    type="range"
+                    min="10"
+                    max="20"
+                    value={previewSettings.fontSize}
+                    onChange={(e) => handleFontSizeChange(parseInt(e.target.value))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <div className="flex justify-between text-sm text-gray-500 mt-2">
+                    <span>10px</span>
+                    <span>20px</span>
+                  </div>
+                </div>
+
+                {/* Font Family */}
+                <div>
+                  <label className={`block text-lg font-medium ${themeClasses.text.primary} mb-4`}>
+                    Font Family
+                  </label>
+                  <div className="grid grid-cols-3 gap-4">
+                    {(['sans-serif', 'monospace', 'serif'] as const).map((font) => (
+                      <button
+                        key={font}
+                        onClick={() => handleFontFamilyChange(font)}
+                        className={`p-4 rounded-lg border transition-all duration-300 ${
+                          previewSettings.fontFamily === font
+                            ? `${themeClasses.button.active}`
+                            : `${themeClasses.card} hover:border-gray-600`
+                        }`}
+                        style={{ fontFamily: font }}
+                      >
+                        <div className="text-center">
+                          <div className={`font-medium ${themeClasses.text.primary} mb-1 capitalize`}>
+                            {font.replace('-', ' ')}
+                          </div>
+                          <div className={`text-sm ${themeClasses.text.secondary}`}>
+                            Sample Text
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
             {activeSection === 'accessibility' && (
-              <div>
+              <div className="space-y-8">
                 <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Accessibility</h3>
-                <p className={themeClasses.text.secondary}>Accessibility settings will be available in a future update.</p>
+                
+                <div className="space-y-6">
+                  <div className={`flex items-center justify-between p-4 ${themeClasses.card} rounded-lg`}>
+                    <div className="flex items-center space-x-3">
+                      <Eye className="w-5 h-5 text-purple-400" />
+                      <div>
+                        <h4 className={`${themeClasses.text.primary} font-medium`}>High Contrast Mode</h4>
+                        <p className={`${themeClasses.text.secondary} text-sm`}>Increase contrast for better visibility</p>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleAccessibilityToggle('highContrast')}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                        previewSettings.highContrast ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-gray-600'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                          previewSettings.highContrast ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <div className={`flex items-center justify-between p-4 ${themeClasses.card} rounded-lg`}>
+                    <div className="flex items-center space-x-3">
+                      <Keyboard className="w-5 h-5 text-green-400" />
+                      <div>
+                        <h4 className={`${themeClasses.text.primary} font-medium`}>Keyboard Navigation</h4>
+                        <p className={`${themeClasses.text.secondary} text-sm`}>Enhanced focus indicators for keyboard users</p>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleAccessibilityToggle('keyboardNavigation')}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                        previewSettings.keyboardNavigation ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gray-600'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                          previewSettings.keyboardNavigation ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
             {activeSection === 'language' && (
-              <div>
+              <div className="space-y-8">
                 <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Language</h3>
-                <p className={themeClasses.text.secondary}>Language settings will be available in a future update.</p>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.entries(languages).map(([code, name]) => (
+                    <button
+                      key={code}
+                      onClick={() => handleLanguageChange(code as any)}
+                      className={`p-4 rounded-lg border transition-all duration-300 ${
+                        previewSettings.language === code
+                          ? `${themeClasses.button.active}`
+                          : `${themeClasses.card} hover:border-gray-600`
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className={`font-medium ${themeClasses.text.primary} mb-1`}>
+                          {name}
+                        </div>
+                        <div className={`text-sm ${themeClasses.text.secondary}`}>
+                          {code.toUpperCase()}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
             {activeSection === 'notifications' && (
-              <div>
+              <div className="space-y-8">
                 <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Notifications</h3>
-                <p className={themeClasses.text.secondary}>Notification settings will be available in a future update.</p>
+                
+                <div className="space-y-6">
+                  {[
+                    { key: 'assignmentDue', label: 'Assignment Due', desc: 'Notify when assignments are due' },
+                    { key: 'systemUpdates', label: 'System Updates', desc: 'Notify about system updates and maintenance' },
+                    { key: 'messages', label: 'Messages', desc: 'Notify about new messages and announcements' }
+                  ].map((notification) => (
+                    <div key={notification.key} className={`flex items-center justify-between p-4 ${themeClasses.card} rounded-lg`}>
+                      <div className="flex items-center space-x-3">
+                        <Bell className="w-5 h-5 text-blue-400" />
+                        <div>
+                          <h4 className={`${themeClasses.text.primary} font-medium`}>{notification.label}</h4>
+                          <p className={`${themeClasses.text.secondary} text-sm`}>{notification.desc}</p>
+                        </div>
+                      </div>
+                      
+                      <button
+                        onClick={() => handleNotificationToggle(notification.key as any)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                          previewSettings.notifications[notification.key as keyof typeof previewSettings.notifications] 
+                            ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-gray-600'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                            previewSettings.notifications[notification.key as keyof typeof previewSettings.notifications] 
+                              ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Notification Style */}
+                  <div>
+                    <h4 className={`text-lg font-medium ${themeClasses.text.primary} mb-4`}>Display Style</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      {(['popup', 'banner'] as const).map((style) => (
+                        <button
+                          key={style}
+                          onClick={() => handleNotificationStyleChange(style)}
+                          className={`p-4 rounded-lg border transition-all duration-300 ${
+                            previewSettings.notifications.style === style
+                              ? `${themeClasses.button.active}`
+                              : `${themeClasses.card} hover:border-gray-600`
+                          }`}
+                        >
+                          <div className="text-center">
+                            <div className={`font-medium ${themeClasses.text.primary} mb-1 capitalize`}>
+                              {style}
+                            </div>
+                            <div className={`text-sm ${themeClasses.text.secondary}`}>
+                              {style === 'popup' ? 'Modal overlay' : 'Top banner'}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
-            {activeSection === 'privacy' && (
-              <div>
-                <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Privacy</h3>
-                <p className={themeClasses.text.secondary}>Privacy settings will be available in a future update.</p>
+            {activeSection === 'learning' && (
+              <div className="space-y-8">
+                <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Learning Preferences</h3>
+                
+                {/* Skill Level */}
+                <div>
+                  <h4 className={`text-lg font-medium ${themeClasses.text.primary} mb-4`}>Skill Level</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
+                      <button
+                        key={level}
+                        onClick={() => handleLearningPreferenceChange('skillLevel', level)}
+                        className={`p-4 rounded-lg border transition-all duration-300 ${
+                          previewSettings.learningPreferences.skillLevel === level
+                            ? `${themeClasses.button.active}`
+                            : `${themeClasses.card} hover:border-gray-600`
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className={`font-medium ${themeClasses.text.primary} mb-1 capitalize`}>
+                            {level}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Content Focus */}
+                <div>
+                  <h4 className={`text-lg font-medium ${themeClasses.text.primary} mb-4`}>Content Focus</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {contentFocusOptions.map((option) => (
+                      <label key={option} className={`flex items-center space-x-3 p-3 ${themeClasses.card} rounded-lg cursor-pointer hover:border-gray-600 transition-all duration-300`}>
+                        <input
+                          type="checkbox"
+                          checked={previewSettings.learningPreferences.contentFocus.includes(option)}
+                          onChange={(e) => {
+                            const newFocus = e.target.checked
+                              ? [...previewSettings.learningPreferences.contentFocus, option]
+                              : previewSettings.learningPreferences.contentFocus.filter(f => f !== option);
+                            handleLearningPreferenceChange('contentFocus', newFocus);
+                          }}
+                          className="w-4 h-4 text-cyan-500 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500"
+                        />
+                        <span className={`${themeClasses.text.primary} capitalize`}>
+                          {option.replace('-', ' ')}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Interactive Mode */}
+                <div className={`flex items-center justify-between p-4 ${themeClasses.card} rounded-lg`}>
+                  <div className="flex items-center space-x-3">
+                    <Sliders className="w-5 h-5 text-orange-400" />
+                    <div>
+                      <h4 className={`${themeClasses.text.primary} font-medium`}>Interactive Mode</h4>
+                      <p className={`${themeClasses.text.secondary} text-sm`}>Enable interactive UI elements and animations</p>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => handleLearningPreferenceChange('interactiveMode', !previewSettings.learningPreferences.interactiveMode)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                      previewSettings.learningPreferences.interactiveMode ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                        previewSettings.learningPreferences.interactiveMode ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
             )}
             
             {/* Action Buttons */}
             <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-800 mt-8">
               <button
-                onClick={onClose}
+                onClick={handleCancel}
                 className={`px-6 py-3 ${themeClasses.card} hover:bg-gray-800/50 ${themeClasses.text.primary} rounded-lg transition-all duration-300 font-medium border hover:border-gray-600`}
               >
                 Cancel

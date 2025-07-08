@@ -4,6 +4,26 @@ interface Settings {
   theme: 'light' | 'dark';
   themeVariant: 'modern-dark' | 'blue-professional' | 'deep-purple';
   backgroundAnimation: boolean;
+  fontSize: number;
+  fontFamily: 'sans-serif' | 'monospace' | 'serif';
+  highContrast: boolean;
+  keyboardNavigation: boolean;
+  language: 'en' | 'es' | 'fr' | 'de';
+  notifications: {
+    assignmentDue: boolean;
+    systemUpdates: boolean;
+    messages: boolean;
+    style: 'popup' | 'banner';
+  };
+  learningPreferences: {
+    skillLevel: 'beginner' | 'intermediate' | 'advanced';
+    contentFocus: string[];
+    interactiveMode: boolean;
+  };
+  customColors: {
+    primary: string;
+    accent: string;
+  };
 }
 
 interface SettingsContextType {
@@ -12,9 +32,29 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  theme: 'dark',
+  theme: 'dark', // Changed default to dark to show the cyber grid
   themeVariant: 'modern-dark',
   backgroundAnimation: true,
+  fontSize: 14,
+  fontFamily: 'monospace',
+  highContrast: false,
+  keyboardNavigation: true,
+  language: 'en',
+  notifications: {
+    assignmentDue: true,
+    systemUpdates: false,
+    messages: false,
+    style: 'popup'
+  },
+  learningPreferences: {
+    skillLevel: 'beginner',
+    contentFocus: ['fundamentals', 'classes', 'methods'],
+    interactiveMode: true
+  },
+  customColors: {
+    primary: '#06b6d4',
+    accent: '#8b5cf6'
+  }
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
