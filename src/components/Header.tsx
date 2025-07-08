@@ -9,11 +9,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-<<<<<<< HEAD
   const { settings, updateSettings } = useSettings();
-=======
-  const { settings } = useSettings();
->>>>>>> 6184c7bed723d7821059a7a869c48235523153c8
 
   const isActive = (path: string) => {
     return location.pathname === path || (path === '/home' && location.pathname === '/');
@@ -159,7 +155,6 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-<<<<<<< HEAD
             <button 
               onClick={toggleTheme}
               className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:${settings.theme === 'light' ? 'bg-gray-100' : 'bg-gray-800/50'} rounded-lg transition-all duration-200 group`}
@@ -174,14 +169,6 @@ const Header: React.FC = () => {
             <button 
               onClick={() => setShowSettings(true)}
               className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:${settings.theme === 'light' ? 'bg-gray-100' : 'bg-gray-800/50'} rounded-lg transition-all duration-200`}
-=======
-            <button className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:bg-gray-800/50 rounded-lg transition-all duration-200 group`}>
-              <Sun className="w-5 h-5 group-hover:rotate-45 transition-transform duration-200" />
-            </button>
-            <button 
-              onClick={() => setShowSettings(true)}
-              className={`p-2 ${textClasses.secondary} ${textClasses.hover} hover:bg-gray-800/50 rounded-lg transition-all duration-200`}
->>>>>>> 6184c7bed723d7821059a7a869c48235523153c8
             >
               <Settings className="w-5 h-5" />
             </button>
