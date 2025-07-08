@@ -337,7 +337,7 @@ const ComponentsPage: React.FC = () => {
 
       {/* Code Example Modal */}
       {selectedExample && (
-        <div className={`fixed inset-0 ${themeClasses.overlay} backdrop-blur-sm z-50 flex items-center justify-center p-4`}>
+        <div className={`fixed inset-0 ${themeClasses.overlay} backdrop-blur-sm z-[99999] flex items-center justify-center p-4`}>
           <div className={`${themeClasses.modal} rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative`}>
             {/* Animated background gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-purple-500/5 to-transparent opacity-50"></div>
