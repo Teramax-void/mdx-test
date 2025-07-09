@@ -124,7 +124,7 @@ const CourseSections: React.FC = () => {
       icon: <Database className="w-6 h-6" />,
       color: 'from-orange-500 to-orange-600',
       link: '/documentation',
-      status: 'available'
+      status: 'coming-soon'
     },
     {
       id: 'exception-handling',
@@ -133,7 +133,7 @@ const CourseSections: React.FC = () => {
       icon: <Lock className="w-6 h-6" />,
       color: 'from-red-500 to-red-600',
       link: '/documentation',
-      status: 'available'
+      status: 'coming-soon'
     },
     {
       id: 'file-io',
@@ -142,10 +142,34 @@ const CourseSections: React.FC = () => {
       icon: <BookOpen className="w-6 h-6" />,
       color: 'from-violet-500 to-violet-600',
       link: '/documentation',
-      status: 'available'
+      status: 'coming-soon'
     }
   ];
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'available':
+        return (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+            Available
+          </span>
+        );
+      case 'coming-soon':
+        return (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+            Coming Soon
+          </span>
+        );
+      case 'locked':
+        return (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
+            Locked
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <section className="py-24 px-8">
