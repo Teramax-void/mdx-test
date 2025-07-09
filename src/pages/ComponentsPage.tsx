@@ -300,38 +300,6 @@ const ComponentsPage: React.FC = () => {
           </div>
 
           {/* Stats Section */}
-          <div className={`mt-12 ${themeClasses.card} rounded-xl p-8 relative overflow-hidden`}>
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5"></div>
-            <div className="relative">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg">
-                  <Zap className="w-5 h-5 text-cyan-400" />
-                </div>
-                <h3 className={`text-xl font-bold ${themeClasses.text.primary} tracking-wide`}>COMPONENT LIBRARY STATS</h3>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-cyan-400 mb-2">{codeExamples.length}</div>
-                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Total Components</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-400 mb-2">{categories.length - 1}</div>
-                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Categories</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-400 mb-2">
-                    {codeExamples.filter(e => e.difficulty === 'Beginner').length}
-                  </div>
-                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Beginner Level</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-yellow-400 mb-2">100%</div>
-                  <div className={`text-sm ${themeClasses.text.secondary} tracking-wide`}>Ready to Use</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

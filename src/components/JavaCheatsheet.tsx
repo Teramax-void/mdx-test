@@ -471,28 +471,6 @@ public void checkAge(int age) throws Exception {
       </div>
 
       {/* Enhanced Footer Stats */}
-      <div className={`mt-12 sm:mt-20 ${themeClasses.container} border-t ${themeClasses.border}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
-            <div className="space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-cyan-400">{cheatBlocks.length}</div>
-              <div className={`text-xs sm:text-sm ${themeClasses.text.secondary} font-medium`}>Total Concepts</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-400">{categories.length - 1}</div>
-              <div className={`text-xs sm:text-sm ${themeClasses.text.secondary} font-medium`}>Categories</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-green-400">100%</div>
-              <div className={`text-xs sm:text-sm ${themeClasses.text.secondary} font-medium`}>Ready to Use</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-yellow-400">Fast</div>
-              <div className={`text-xs sm:text-sm ${themeClasses.text.secondary} font-medium`}>Loading</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
