@@ -82,14 +82,6 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
     updateSettings(newSettings);
   };
 
-  const handleLearningPreferenceChange = (key: string, value: any) => {
-    const newSettings = {
-      ...previewSettings,
-      learningPreferences: { ...previewSettings.learningPreferences, [key]: value }
-    };
-    setPreviewSettings(newSettings);
-    updateSettings(newSettings);
-  };
 
   const handleColorChange = (colorType: 'primary' | 'accent', color: string) => {
     const newSettings = {
@@ -126,11 +118,6 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
         systemUpdates: false,
         messages: false,
         style: 'popup' as const
-      },
-      learningPreferences: {
-        skillLevel: 'beginner' as const,
-        contentFocus: ['fundamentals', 'classes', 'methods'],
-        interactiveMode: true
       },
       customColors: {
         primary: '#06b6d4',
@@ -188,15 +175,6 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
     de: 'Deutsch'
   };
 
-  const contentFocusOptions = [
-    'fundamentals',
-    'classes',
-    'methods',
-    'inheritance',
-    'polymorphism',
-    'data-structures',
-    'algorithms'
-  ];
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] flex items-center justify-center p-4">
@@ -229,8 +207,7 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
                 { id: 'typography', title: 'Typography', icon: <Type className="w-4 h-4" /> },
                 { id: 'accessibility', title: 'Accessibility', icon: <Accessibility className="w-4 h-4" /> },
                 { id: 'language', title: 'Language', icon: <Languages className="w-4 h-4" /> },
-                { id: 'notifications', title: 'Notifications', icon: <Bell className="w-4 h-4" /> },
-                { id: 'learning', title: 'Learning Preferences', icon: <User className="w-4 h-4" /> }
+                { id: 'notifications', title: 'Notifications', icon: <Bell className="w-4 h-4" /> }
               ].map((section) => (
                 <button 
                   key={section.id}
@@ -591,84 +568,8 @@ const SettingsHover: React.FC<SettingsHoverProps> = ({ isVisible, onClose }) => 
               </div>
             )}
 
-            {activeSection === 'learning' && (
-              <div className="space-y-8">
-                <h3 className={`text-2xl font-bold ${themeClasses.text.primary} mb-6 tracking-wide`}>Learning Preferences</h3>
-                
-                {/* Skill Level */}
-                <div>
-                  <h4 className={`text-lg font-medium ${themeClasses.text.primary} mb-4`}>Skill Level</h4>
-                  <div className="grid grid-cols-3 gap-4">
-                    {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
-                      <button
-                        key={level}
-                        onClick={() => handleLearningPreferenceChange('skillLevel', level)}
-                        className={`p-4 rounded-lg border transition-all duration-300 ${
-                          previewSettings.learningPreferences.skillLevel === level
-                            ? `${themeClasses.button.active}`
-                            : `${themeClasses.card} hover:border-gray-600`
-                        }`}
-                      >
-                        <div className="text-center">
-                          <div className={`font-medium ${themeClasses.text.primary} mb-1 capitalize`}>
-                            {level}
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Content Focus */}
-                <div>
-                  <h4 className={`text-lg font-medium ${themeClasses.text.primary} mb-4`}>Content Focus</h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    {contentFocusOptions.map((option) => (
-                      <label key={option} className={`flex items-center space-x-3 p-3 ${themeClasses.card} rounded-lg cursor-pointer hover:border-gray-600 transition-all duration-300`}>
-                        <input
-                          type="checkbox"
-                          checked={previewSettings.learningPreferences.contentFocus.includes(option)}
-                          onChange={(e) => {
-                            const newFocus = e.target.checked
-                              ? [...previewSettings.learningPreferences.contentFocus, option]
-                              : previewSettings.learningPreferences.contentFocus.filter(f => f !== option);
-                            handleLearningPreferenceChange('contentFocus', newFocus);
-                          }}
-                          className="w-4 h-4 text-cyan-500 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500"
-                        />
-                        <span className={`${themeClasses.text.primary} capitalize`}>
-                          {option.replace('-', ' ')}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Interactive Mode */}
-                <div className={`flex items-center justify-between p-4 ${themeClasses.card} rounded-lg`}>
-                  <div className="flex items-center space-x-3">
-                    <Sliders className="w-5 h-5 text-orange-400" />
-                    <div>
-                      <h4 className={`${themeClasses.text.primary} font-medium`}>Interactive Mode</h4>
-                      <p className={`${themeClasses.text.secondary} text-sm`}>Enable interactive UI elements and animations</p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => handleLearningPreferenceChange('interactiveMode', !previewSettings.learningPreferences.interactiveMode)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-                      previewSettings.learningPreferences.interactiveMode ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gray-600'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                        previewSettings.learningPreferences.interactiveMode ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            )}
             
             {/* Action Buttons */}
             <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-800 mt-8">

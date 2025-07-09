@@ -15,11 +15,6 @@ interface Settings {
     messages: boolean;
     style: 'popup' | 'banner';
   };
-  learningPreferences: {
-    skillLevel: 'beginner' | 'intermediate' | 'advanced';
-    contentFocus: string[];
-    interactiveMode: boolean;
-  };
   customColors: {
     primary: string;
     accent: string;
@@ -45,11 +40,6 @@ const defaultSettings: Settings = {
     systemUpdates: false,
     messages: false,
     style: 'popup'
-  },
-  learningPreferences: {
-    skillLevel: 'beginner',
-    contentFocus: ['fundamentals', 'classes', 'methods'],
-    interactiveMode: true
   },
   customColors: {
     primary: '#06b6d4',
