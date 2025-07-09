@@ -10,6 +10,7 @@ interface CourseSection {
   icon: React.ReactNode;
   color: string;
   link: string;
+  status: 'available' | 'coming-soon' | 'locked';
 }
 
 const CourseSections: React.FC = () => {
@@ -236,3 +237,8 @@ const CourseSections: React.FC = () => {
           </div>
         </div>
       </div>
+    </section>
+  );
+};
+
+export default CourseSections;
