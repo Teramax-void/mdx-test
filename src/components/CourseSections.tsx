@@ -178,6 +178,7 @@ const CourseSections: React.FC = () => {
                   <div className={`w-12 h-12 bg-gradient-to-br ${section.color} rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
                     {section.icon}
                   </div>
+                  {getStatusBadge(section.status)}
                 </div>
 
                 {/* Content */}
@@ -189,16 +190,24 @@ const CourseSections: React.FC = () => {
                 </p>
 
                 {/* Action */}
-                <Link
-                  to={section.link}
-                  className={`inline-flex items-center space-x-2 ${themeClasses.button} font-medium text-sm group-hover:translate-x-1 transition-all duration-300`}
-                >
-                  <span>View Content</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                {section.status === 'available' ? (
+                  <Link
+                    to={section.link}
+                    className={`inline-flex items-center space-x-2 ${themeClasses.button} font-medium text-sm group-hover:translate-x-1 transition-all duration-300`}
+                  >
+                    <span>View Content</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                ) : (
+                  <div className={`inline-flex items-center space-x-2 ${themeClasses.text.muted} text-sm`}>
+                    <span>{section.status === 'coming-soon' ? 'Coming Soon' : 'Locked'}</span>
+                  </div>
+                )}
 
-                {/* Progress indicator */}
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {/* Progress indicator for available sections */}
+                {section.status === 'available' && (
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                )}
               </div>
             </div>
           ))}
